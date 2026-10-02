@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+    <defs>
+      <linearGradient id="whaleBody" x1="20" y1="40" x2="180" y2="160" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#38bdf8" />
+        <stop offset="30%" stop-color="#00d2ff" />
+        <stop offset="70%" stop-color="#3b82f6" />
+        <stop offset="100%" stop-color="#8b5cf6" />
+      </linearGradient>
+      <linearGradient id="whaleBelly" x1="40" y1="120" x2="140" y2="160" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+        <stop offset="60%" stop-color="#e0f2fe" stop-opacity="0.85" />
+        <stop offset="100%" stop-color="#bae6fd" stop-opacity="0.6" />
+      </linearGradient>
+      <linearGradient id="spout" x1="60" y1="10" x2="90" y2="50" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#67e8f9" />
+        <stop offset="100%" stop-color="#38bdf8" />
+      </linearGradient>
+      <linearGradient id="flipper" x1="70" y1="105" x2="100" y2="145" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#0284c7" />
+        <stop offset="100%" stop-color="#6366f1" />
+      </linearGradient>
+      <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#0e1e38" />
+        <stop offset="70%" stop-color="#080c16" />
+        <stop offset="100%" stop-color="#030712" />
+      </radialGradient>
+      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#38bdf8" flood-opacity="0.5"/>
+      </filter>
+    </defs>
+    
+
+    <g filter="url(#glow)">
+      <!-- Water Spout -->
+      <path d="M78 48 C75 30 58 18 44 24 C40 26 48 35 58 38 C68 41 74 46 76 50" fill="url(#spout)" />
+      <path d="M82 48 C85 28 104 16 118 20 C122 22 112 32 102 36 C92 40 85 45 84 50" fill="url(#spout)" />
+      <circle cx="42" cy="22" r="3.5" fill="#67e8f9" />
+      <circle cx="120" cy="18" r="3" fill="#93c5fd" />
+      <circle cx="80" cy="14" r="4" fill="#a5f3fc" />
+
+      <!-- Fluke / Tail -->
+      <path d="M148 98 C160 85 178 72 190 76 C186 88 178 98 168 104 C180 108 192 118 190 132 C176 130 162 118 148 108 Z" fill="url(#whaleBody)" stroke="#7dd3fc" stroke-width="2" stroke-linejoin="round" />
+      
+      <!-- Main Body -->
+      <path d="M32 94 C32 64 62 48 96 50 C134 52 158 74 166 98 C158 114 138 126 112 134 C82 142 50 136 38 118 C33 110 32 102 32 94 Z" fill="url(#whaleBody)" stroke="#7dd3fc" stroke-width="2" />
+      
+      <!-- Belly -->
+      <path d="M38 108 C48 126 78 135 112 132 C104 138 88 141 72 140 C52 138 40 126 38 108 Z" fill="url(#whaleBelly)" />
+      <path d="M52 114 C64 125 84 131 104 131" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+      <path d="M58 120 C70 129 88 133 100 133" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.6" />
+
+      <!-- Flipper -->
+      <path d="M74 104 C72 116 78 132 92 144 C96 142 98 134 96 124 C94 114 86 104 74 104 Z" fill="url(#flipper)" stroke="#38bdf8" stroke-width="1.5" />
+
+      <!-- Eye -->
+      <path d="M52 86 Q57 81 62 86" stroke="#0f172a" stroke-width="3" stroke-linecap="round" />
+      <circle cx="57" cy="80" r="2" fill="#ffffff" />
+
+      <!-- Stars / Constellation dots on whale -->
+      <circle cx="86" cy="72" r="2.2" fill="#e0e7ff" />
+      <circle cx="108" cy="76" r="2" fill="#bae6fd" />
+      <circle cx="126" cy="84" r="2" fill="#c4b5fd" />
+      <circle cx="142" cy="92" r="1.8" fill="#e0e7ff" />
+      <path d="M36 98 Q42 102 48 98" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </svg>

@@ -1,0 +1,6 @@
+{
+  "name": "Lita-Whale",
+  "description": "Una herramienta de apoyo neurológico y sensorial para la regulación de crisis y comunicación AAC.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
