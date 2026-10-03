@@ -85,3 +85,7 @@ export const AAC_CARDS: AACCard[] = [
   { id: 'card-slow', icon: '⏳', label: 'Procesamiento lento', text: 'Necesito más tiempo para procesar lo que me estás diciendo.\n\nPor favor, usa frases cortas y espera 10 segundos antes de repetir.' },
   { id: 'card-med', icon: '🏥', label: 'Ayuda médica requerida', text: 'Necesito asistencia médica profesional.\n\nNo es un ataque de pánico común, es una crisis neurológica aguda.' },
 ];
+
+// Afiliados (M8): pon aquí tus etiquetas. Si están vacías, los enlaces salen sin comisión.
+export const AMAZON_TAG = ''; // ejemplo: 'tu-etiqueta-20'
+export const HOTMART_REF = ''; // tu código de afiliado de Hotmart, si lo usas

@@ -16,7 +16,7 @@ export default function Header({ title, onBack }: HeaderProps) {
           whileTap={{ scale: 0.9 }}
           onClick={onBack}
           className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer backdrop-blur-xl shadow-lg ring-1 ring-white/5 shrink-0 transition-colors"
-          aria-label="Volver"
+          aria-label={document.documentElement.lang === 'en' ? 'Back' : 'Volver'}
         >
           <ArrowLeft size={20} />
         </motion.button>

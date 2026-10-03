@@ -208,6 +208,12 @@ export default function IsochronicTones({ language, onBack }: IsochronicTonesPro
     <div className="flex flex-col h-full bg-transparent overflow-hidden">
       <Header title={t.title} onBack={onBack} />
 
+      <p className="mx-6 mt-3 text-[11px] text-amber-300">
+        {isEs
+          ? 'Aviso: si tienes epilepsia o sensibilidad a estímulos rítmicos, consulta a tu médico antes de usar esta función. Esta app es un apoyo y no reemplaza la atención profesional.'
+          : 'Notice: if you have epilepsy or sensitivity to rhythmic stimuli, check with your doctor before using this feature. This app is a support tool and does not replace professional care.'}
+      </p>
+
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
       {/* Hero Visualizer & Master Control Card */}
       <div className="mx-6 mt-4 p-6 rounded-[36px] bg-indigo-950/20 backdrop-blur-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">

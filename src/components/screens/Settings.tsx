@@ -73,6 +73,12 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
   return (
     <div className="flex flex-col h-full overflow-hidden bg-transparent">
       <Header title={t.title} onBack={onBack} />
+
+      <p className="mx-6 mt-3 text-[11px] text-amber-300">
+        {profile.language === 'es'
+          ? 'Esta app es un apoyo y no reemplaza la atención de un profesional de salud.'
+          : 'This app is a support tool and does not replace care from a health professional.'}
+      </p>
       
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 mt-4 space-y-8 safe-area-bottom pb-12">
         {/* Sistema */}

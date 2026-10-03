@@ -51,32 +51,16 @@ export default function Crisis({
   const emergencyContact = profile.contacts?.[0];
   const isSpanish = language === 'es';
 
-  // Request GPS location on component mount or modal open
+  // Una sola solicitud de GPS al abrir la pantalla
   useEffect(() => {
     let isMounted = true;
     setIsLocating(true);
-    
-    // HTML5 Geolocation
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          if (isMounted) {
-            setGpsCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-          }
-        },
-        (err) => console.warn("GPS error:", err.message),
-        { timeout: 8000 }
-      );
-    }
-
-    // Detect Country
-    detectCountryByGPS().then((country) => {
-      if (isMounted) {
-        if (country) setDetectedCountry(country);
-        setIsLocating(false);
-      }
+    detectCountryByGPS().then(({ country, lat, lng }) => {
+      if (!isMounted) return;
+      if (lat !== undefined && lng !== undefined) setGpsCoords({ lat, lng });
+      if (country) setDetectedCountry(country);
+      setIsLocating(false);
     });
-
     return () => { isMounted = false; };
   }, []);
 
@@ -344,6 +328,14 @@ export default function Crisis({
                     <Phone size={18} />
                     <span>{t.ideationModal?.callContact || 'Llamar a Contacto de Apoyo'}</span>
                   </button>
+                )}
+
+                {!detectedCountry && !profile.country && (
+                  <p className="text-[11px] text-amber-300 px-1">
+                    {isSpanish
+                      ? 'Elige tu país en Ajustes para ver tu línea de ayuda local, o busca una en findahelpline.com.'
+                      : 'Choose your country in Settings to see your local helpline, or search at findahelpline.com.'}
+                  </p>
                 )}
 
                 {/* Localized Helpline button matching user's GPS country */}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AMAZON_TAG } from '../../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language } from '../../types';
@@ -40,8 +41,9 @@ export default function Kit({ language, onBack }: KitProps) {
   const isEs = language === 'es';
 
   // Affiliate tag set by the developer or stored
-  const affiliateTag = localStorage.getItem('ns_amazon_tag') || '';
+  const affiliateTag = localStorage.getItem('ns_amazon_tag') || AMAZON_TAG;
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const tools: SensoryTool[] = [
     {
@@ -320,6 +322,14 @@ export default function Kit({ language, onBack }: KitProps) {
             );
           })}
         </div>
+
+        {affiliateTag && (
+          <p className="text-[11px] text-slate-400 text-center">
+            {isEs
+              ? 'Como afiliado de Amazon, gano comisión por compras que califican.'
+              : 'As an Amazon Associate I earn from qualifying purchases.'}
+          </p>
+        )}
       </div>
     </div>
   );

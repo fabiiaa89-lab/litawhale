@@ -11,13 +11,20 @@ export function initGemini() {
   return;
 }
 
+const RISK_WORDS = /suicid|matarme|quitarme la vida|no quiero vivir|hacerme da(ñ|n)o|autolesi|kill myself|end my life|want to die|self.?harm/i;
+
 export async function askNeuralCortex(prompt: string, profile: Profile, language: string = 'es') {
+  // Revisión local, sin depender de la IA: ante riesgo, se dirige a la ayuda real
+  if (RISK_WORDS.test(prompt)) {
+    return language === 'es'
+      ? 'Lo que cuentas es importante. Abre el botón de Crisis para ver la línea de ayuda de tu país o llama ahora a tu contacto de emergencia. No estás solo/a.'
+      : 'What you share matters. Open the Crisis button to see your local helpline, or call your emergency contact now. You are not alone.';
+  }
+
   // Construimos el contexto que antes era el systemInstruction
-  const systemContext = `Actúa como un regulador lógico para una persona autista (responde en el idioma: ${language === 'es' ? 'Español' : 'English'}). (${profile.name || 'el usuario'}). Tus respuestas deben ser directas, basadas en hechos y evitar el consuelo emocional vacío. Usa los datos del perfil del usuario (sangre, sensibilidad, intereses, documentos) para personalizar cada instrucción. Si el usuario está en crisis (Nivel 1 o 2), prioriza la seguridad física y el mutismo. Si el usuario habla de deudas, recuérdale que es dinero del futuro y ayúdale a planificar el pago sin culpa.
+  const systemContext = `Actúa como un regulador lógico para una persona autista (responde en el idioma: ${language === 'es' ? 'Español' : 'English'}). Tus respuestas deben ser directas, basadas en hechos y evitar el consuelo emocional vacío. Usa los datos del perfil del usuario (sensibilidad, intereses) para personalizar cada instrucción. Si el usuario está en crisis (Nivel 1 o 2), prioriza la seguridad física y el mutismo. Si el usuario habla de deudas, recuérdale que es dinero del futuro y ayúdale a planificar el pago sin culpa.
 
 CONTEXTO DEL USUARIO:
-- Tipo de Sangre: ${profile.bloodType || 'No especificado'}
-- Alergias: ${profile.allergies || 'No especificadas'}
 - Intereses: ${profile.interests || 'No especificados'}
 - Hipersensibilidades: ${profile.hypersensitivities || 'No especificadas'}
 - Hiposensibilidades: ${profile.hyposensitivities || 'No especificadas'}
@@ -38,7 +45,13 @@ CONTEXTO DEL USUARIO:
     if (!response.ok) throw new Error('Proxy falló');
     
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      return language === 'es'
+        ? 'No pude generar una respuesta. Si estás en crisis, abre el botón de Crisis o llama a tu contacto de emergencia o a tu línea de ayuda local.'
+        : 'I could not generate a reply. If you are in crisis, open the Crisis button or call your emergency contact or local helpline.';
+    }
+    return text;
   } catch (error) {
     console.error("Cortex Proxy Error:", error);
     return language === 'es' ? 'Error en la conexión con el Córtex Externo.' : 'Error connecting to External Cortex.';
@@ -58,7 +71,13 @@ export async function getCompanionMessage(entity: string, language: string = 'es
     if (!response.ok) throw new Error('Proxy falló');
 
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      return language === 'es'
+        ? 'No pude generar una respuesta. Si estás en crisis, abre el botón de Crisis o llama a tu contacto de emergencia o a tu línea de ayuda local.'
+        : 'I could not generate a reply. If you are in crisis, open the Crisis button or call your emergency contact or local helpline.';
+    }
+    return text;
   } catch (error) {
     console.error("Cortex Proxy Error:", error);
     return language === 'es' ? 'El compañero está en silencio, cuidándote atentamente.' : 'The companion is silent, watching over you carefully.';

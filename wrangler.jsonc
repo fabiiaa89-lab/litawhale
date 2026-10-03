@@ -1,0 +1,30 @@
+{
+  // Debe coincidir con el nombre del Worker que ya existe en Cloudflare
+  // (litawhale.fabiiaa89.workers.dev -> "litawhale").
+  "name": "litawhale",
+  "compatibility_date": "2026-09-01",
+
+  // Worker que atiende /api/gemini
+  "main": "./worker/index.js",
+
+  "assets": {
+    // Carpeta que genera "bun run build"
+    "directory": "./dist",
+    // Cualquier ruta de la SPA devuelve index.html
+    "not_found_handling": "single-page-application",
+    // Solo /api/* pasa por el Worker; todo lo demás se sirve directo desde los assets
+    "run_worker_first": ["/api/*"]
+  },
+
+  // Límite de solicitudes: 10 por minuto, por IP y por ubicación de Cloudflare.
+  // Requiere Wrangler 4.36.0 o superior.
+  "ratelimits": [
+    {
+      "name": "GEMINI_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 10, "period": 60 }
+    }
+  ],
+
+  "observability": { "enabled": true }
+}

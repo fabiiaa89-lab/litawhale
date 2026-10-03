@@ -30,6 +30,7 @@ export default function NeuralCortex({ profile, language, onBack, onNavigate }: 
     return localStorage.getItem('ns_is_pro') === 'true';
   });
   const [demoAllowed, setDemoAllowed] = useState(false);
+  const [aiConsent, setAiConsent] = useState<boolean>(() => localStorage.getItem('ns_ai_consent') === 'true');
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -121,6 +122,28 @@ export default function NeuralCortex({ profile, language, onBack, onNavigate }: 
               {isEs ? 'Probar demo gratuita de 1 consulta' : 'Try 1 free demo question'}
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!aiConsent) {
+    return (
+      <div className="flex flex-col h-full bg-black">
+        <Header title={t.title} onBack={onBack} />
+        <div className="flex-1 p-6 flex flex-col justify-center items-center text-center gap-4">
+          <ShieldCheck size={36} className="text-cyan-400" />
+          <p className="text-sm text-slate-200 max-w-sm">
+            {isEs
+              ? 'Para responderte, tus mensajes y los datos sensoriales de tu perfil se envían a un servicio de IA de Google. No envíes datos que no quieras compartir. La IA no reemplaza a un profesional de salud.'
+              : 'To answer you, your messages and the sensory data in your profile are sent to a Google AI service. Do not send anything you do not want to share. The AI does not replace a health professional.'}
+          </p>
+          <button
+            onClick={() => { localStorage.setItem('ns_ai_consent', 'true'); setAiConsent(true); }}
+            className="px-6 py-3 rounded-2xl bg-cyan-500 text-slate-950 font-bold cursor-pointer"
+          >
+            {isEs ? 'Entiendo y acepto' : 'I understand and agree'}
+          </button>
         </div>
       </div>
     );

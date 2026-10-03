@@ -3,12 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Screen, EnergyLevel, Profile, Med, AACCard, SensitivityProfile, Language, Debt } from './types';
 import Home from './components/screens/Home';
 import Anchor from './components/screens/Anchor';
@@ -27,21 +22,25 @@ import { i18n } from './i18n';
 import Settings from './components/screens/Settings';
 import SplashScreen from './components/SplashScreen';
 import SOSData from './components/screens/SOSData';
-import NeuralCortex from './components/screens/NeuralCortex';
 import Debts from './components/screens/Debts';
 import StealthMode from './components/screens/StealthMode';
-import Companion from './components/screens/Companion';
 import IsochronicTones from './components/screens/IsochronicTones';
 import HamburgerMenu from './components/HamburgerMenu';
 import PWAInstallModal from './components/PWAInstallModal';
 import SpoonWidget from './components/SpoonWidget';
-import Kit from './components/screens/Kit';
-import Books from './components/screens/Books';
 import SensoryLog from './components/screens/SensoryLog';
-import Premium from './components/screens/Premium';
+
+const NeuralCortex = lazy(() => import('./components/screens/NeuralCortex'));
+const Companion = lazy(() => import('./components/screens/Companion'));
+const Kit = lazy(() => import('./components/screens/Kit'));
+const Books = lazy(() => import('./components/screens/Books'));
+const Premium = lazy(() => import('./components/screens/Premium'));
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('splash');
+  const [screen, setScreen] = useState<Screen>(
+    () => (sessionStorage.getItem('ns_splash_seen') ? 'home' : 'splash')
+  );
+  const [storageFull, setStorageFull] = useState(false);
   const [energy, setEnergy] = useState<EnergyLevel>(() => {
     try {
       const savedSpoons = localStorage.getItem('ns_spoons');
@@ -96,16 +95,20 @@ export default function App() {
       hyposensitivities: '',
       triggers: '',
       interests: '',
-      country: detectedLang === 'es' ? 'España' : 'United States',
+      country: '',
       currency: detectedLang === 'es' ? 'EUR' : 'USD',
       currencySymbol: detectedLang === 'es' ? '€' : '$'
     };
     if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.language !== 'es' && parsed.language !== 'en') {
-        parsed.language = detectedLang;
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.language !== 'es' && parsed.language !== 'en') {
+          parsed.language = detectedLang;
+        }
+        return { ...defaultProfile, ...parsed };
+      } catch {
+        // perfil dañado: se usa el predeterminado
       }
-      return { ...defaultProfile, ...parsed };
     }
     return defaultProfile;
   });
@@ -129,35 +132,24 @@ export default function App() {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {}
     }
-    return [
-      {
-        id: 'med-1',
-        name: 'Clonazepam / SOS Med',
-        dose: '0.5mg',
-        time: '🚨 En Crisis / SOS',
-        confirmed: false,
-        icon: 'sos'
-      },
-      {
-        id: 'med-2',
-        name: 'Sertralina / Diaria',
-        dose: '50mg',
-        time: '🌅 Mañana · 08:00',
-        confirmed: false,
-        icon: 'capsule'
-      }
-    ];
+    return [];
   });
 
   const [debts, setDebts] = useState<Debt[]>(() => {
-    const saved = localStorage.getItem('ns_debts');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const parsed = JSON.parse(localStorage.getItem('ns_debts') || '[]');
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
   });
 
   useEffect(() => {
+    if (sessionStorage.getItem('ns_splash_seen')) return;
     const timer = setTimeout(() => {
+      sessionStorage.setItem('ns_splash_seen', '1');
       setScreen('home');
-    }, 2500); // ~2 seconds splash
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 
@@ -166,8 +158,10 @@ export default function App() {
       localStorage.setItem('ns_profile', JSON.stringify(profile));
     } catch (e) {
       console.warn("Could not save profile to localStorage:", e);
+      setStorageFull(true);
     }
     document.body.setAttribute('data-sensitivity', profile.sensitivity);
+    document.documentElement.lang = profile.language;
   }, [profile]);
 
   useEffect(() => {
@@ -175,6 +169,7 @@ export default function App() {
       localStorage.setItem('ns_cards', JSON.stringify(cards));
     } catch (e) {
       console.warn("Could not save cards to localStorage:", e);
+      setStorageFull(true);
     }
   }, [cards]);
 
@@ -192,6 +187,7 @@ export default function App() {
       localStorage.setItem('ns_meds', JSON.stringify(meds));
     } catch (e) {
       console.warn("Could not save meds to localStorage:", e);
+      setStorageFull(true);
     }
   }, [meds]);
 
@@ -200,6 +196,7 @@ export default function App() {
       localStorage.setItem('ns_debts', JSON.stringify(debts));
     } catch (e) {
       console.warn("Could not save debts to localStorage:", e);
+      setStorageFull(true);
     }
   }, [debts]);
 
@@ -270,7 +267,7 @@ export default function App() {
     if (profile.contacts?.[0]?.phone) {
       window.location.href = `tel:${profile.contacts[0].phone}`;
     } else {
-      alert("Configura un contacto de emergencia.");
+      alert(profile.language === 'es' ? 'Configura un contacto de emergencia.' : 'Set up an emergency contact.');
     }
   };
 
@@ -385,9 +382,17 @@ export default function App() {
   };
   return (
     <div className="h-[100dvh] w-full bg-gradient-to-br from-[#1a1c2c] via-[#4a192c] to-[#121212] text-slate-200 font-sans overflow-hidden select-none flex flex-col">
+      {storageFull && (
+        <div role="alert" className="fixed top-0 inset-x-0 z-[100] bg-amber-500 text-slate-950 text-xs font-bold p-3 text-center">
+          {profile.language === 'es'
+            ? 'No se pudo guardar: el almacenamiento del dispositivo está lleno. Borra fotos o datos que no uses.'
+            : 'Could not save: device storage is full. Remove photos or data you do not use.'}
+          <button onClick={() => setStorageFull(false)} className="ml-3 underline">OK</button>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         <div key={screen} className="flex-1 h-full overflow-hidden w-full max-w-md mx-auto relative flex flex-col">
-          {renderScreen()}
+          <Suspense fallback={null}>{renderScreen()}</Suspense>
         </div>
       </AnimatePresence>
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AMAZON_TAG, HOTMART_REF } from '../../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language } from '../../types';
@@ -40,8 +41,12 @@ export default function Books({ language, onBack }: BooksProps) {
   const isEs = language === 'es';
 
   // Affiliate configuration stored in localStorage
-  const amazonTag = localStorage.getItem('ns_amazon_tag') || '';
-  const hotmartTag = localStorage.getItem('ns_hotmart_tag') || '';
+  const [amazonTag, setAmazonTag] = useState(() => localStorage.getItem('ns_amazon_tag') || AMAZON_TAG);
+  const [hotmartTag, setHotmartTag] = useState(() => localStorage.getItem('ns_hotmart_tag') || HOTMART_REF);
+  const [tempAmazon, setTempAmazon] = useState(amazonTag);
+  const [tempHotmart, setTempHotmart] = useState(hotmartTag);
+  const [showConfig, setShowConfig] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [platformFilter, setPlatformFilter] = useState<'all' | 'amazon' | 'hotmart'>('all');
 
   const books: BookItem[] = [
@@ -366,6 +371,14 @@ export default function Books({ language, onBack }: BooksProps) {
             );
           })}
         </div>
+
+        {amazonTag && (
+          <p className="text-[11px] text-slate-400 text-center">
+            {isEs
+              ? 'Como afiliado de Amazon, gano comisión por compras que califican.'
+              : 'As an Amazon Associate I earn from qualifying purchases.'}
+          </p>
+        )}
       </div>
     </div>
   );

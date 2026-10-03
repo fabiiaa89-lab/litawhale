@@ -1,23 +1,25 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import {MotionConfig} from 'motion/react';
 import App from './App.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 import './index.css';
 
-// Register PWA Service Worker
+// Registro del service worker (solo en producción, para no servir código viejo mientras desarrollas)
 if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch((err) => {
       console.log('ServiceWorker registration failed: ', err);
     });
   });
-} else if ('serviceWorker' in navigator) {
-  // In development/preview, register for PWA install criteria
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <MotionConfig reducedMotion="user">
+        <App />
+      </MotionConfig>
+    </ErrorBoundary>
   </StrictMode>,
 );
-

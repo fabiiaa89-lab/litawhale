@@ -1,20 +1,14 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Lita Whale
 
-# Run and deploy your AI Studio app
+PWA de apoyo sensorial para adultos autistas. React + Vite, desplegada en Cloudflare Workers.
 
-This contains everything you need to run your app locally.
+## Desarrollo
 
-View your app in AI Studio: https://ai.studio/apps/8e640873-546e-4103-abab-570f809d8d13
+    bun install
+    bun run dev
 
-## Run Locally
+## Despliegue
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Cloudflare construye desde `main` (`bun run build` y `npx wrangler deploy`).
+El Worker (`worker/index.js`) atiende `/api/gemini`. La clave de Gemini va SOLO como
+secreto del Worker (`GEMINI_API_KEY`, en Settings > Variables and Secrets), nunca en el codigo.

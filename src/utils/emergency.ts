@@ -38,10 +38,10 @@ export function getHelplineByCountry(countryStr?: string, lang: Language = 'es')
   if (c.includes('uruguay') || c === 'uy') {
     return { number: '*0767', name: isSpanish ? 'Línea de Prevención del Suicidio (*0767 Uruguay)' : 'Suicide Prevention Line (Uruguay)', country: 'Uruguay' };
   }
-  if (c.includes('estados unidos') || c.includes('united states') || c.includes('usa') || c === 'us') {
+  if (c.includes('estados unidos') || c.includes('united states') || c === 'usa' || c === 'us') {
     return { number: '988', name: '988 Suicide & Crisis Lifeline (USA)', country: 'United States' };
   }
-  if (c.includes('reino unido') || c.includes('united kingdom') || c.includes('uk') || c === 'gb') {
+  if (c.includes('reino unido') || c.includes('united kingdom') || c === 'uk' || c === 'gb') {
     return { number: '111', name: 'NHS Mental Health Crisis Line (UK)', country: 'United Kingdom' };
   }
   if (c.includes('alemania') || c.includes('germany') || c === 'de') {
@@ -54,18 +54,24 @@ export function getHelplineByCountry(countryStr?: string, lang: Language = 'es')
     : { number: '988 / 911', name: 'Emergency & Crisis Support Lifeline', country: 'International' };
 }
 
-// Fetch user country by HTML5 Geolocation API with Nominatim reverse geocoding
-export async function detectCountryByGPS(): Promise<string | null> {
+// Una sola solicitud de GPS: devuelve país (Nominatim) y coordenadas
+export interface GPSResult {
+  country: string | null;
+  lat?: number;
+  lng?: number;
+}
+
+export async function detectCountryByGPS(): Promise<GPSResult> {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
-      resolve(null);
+      resolve({ country: null });
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        const { latitude, longitude } = position.coords;
         try {
-          const { latitude, longitude } = position.coords;
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=3`,
             { headers: { 'Accept-Language': 'es' } }
@@ -74,18 +80,18 @@ export async function detectCountryByGPS(): Promise<string | null> {
             const data = await res.json();
             const countryName = data.address?.country || data.display_name;
             if (countryName) {
-              resolve(countryName);
+              resolve({ country: countryName, lat: latitude, lng: longitude });
               return;
             }
           }
         } catch (e) {
           console.warn('GPS country detection fetch failed:', e);
         }
-        resolve(null);
+        resolve({ country: null, lat: latitude, lng: longitude });
       },
       (err) => {
         console.warn('Geolocation error:', err.message);
-        resolve(null);
+        resolve({ country: null });
       },
       { timeout: 8000 }
     );
