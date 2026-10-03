@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Screen, EnergyLevel, Profile, Med, AACCard, SensitivityProfile, Language, Debt } from './types';
+import { Screen, EnergyLevel, Profile, Med, AACCard, SensitivityProfile, Language, Debt, AppTheme } from './types';
 import Home from './components/screens/Home';
 import Anchor from './components/screens/Anchor';
 import BodyScanner from './components/screens/BodyScanner';
@@ -15,8 +15,7 @@ import Meds from './components/screens/Meds';
 import Crisis from './components/screens/Crisis';
 import EnergyModal from './components/EnergyModal';
 import FullCardOverlay from './components/FullCardOverlay';
-import Header from './components/Header';
-import { AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { i18n } from './i18n';
 
 import Settings from './components/screens/Settings';
@@ -41,6 +40,16 @@ export default function App() {
     () => (sessionStorage.getItem('ns_splash_seen') ? 'home' : 'splash')
   );
   const [storageFull, setStorageFull] = useState(false);
+  const [emergencyWarning, setEmergencyWarning] = useState(false);
+
+  const [theme, setTheme] = useState<AppTheme>(() => {
+    try {
+      const saved = localStorage.getItem('ns_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (e) {}
+    return 'dark'; // Calming dark mode default
+  });
+
   const [energy, setEnergy] = useState<EnergyLevel>(() => {
     try {
       const savedSpoons = localStorage.getItem('ns_spoons');
@@ -63,6 +72,7 @@ export default function App() {
     } catch (e) {}
     return 5;
   });
+
   const [isEnergyModalOpen, setIsEnergyModalOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
@@ -97,7 +107,8 @@ export default function App() {
       interests: '',
       country: '',
       currency: detectedLang === 'es' ? 'EUR' : 'USD',
-      currencySymbol: detectedLang === 'es' ? '€' : '$'
+      currencySymbol: detectedLang === 'es' ? '€' : '$',
+      theme: 'dark'
     };
     if (saved) {
       try {
@@ -143,6 +154,37 @@ export default function App() {
       return [];
     }
   });
+
+  // Apply Theme to DOM
+  useEffect(() => {
+    try {
+      localStorage.setItem('ns_theme', theme);
+    } catch (e) {}
+    const root = document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
+      document.body.style.backgroundColor = '#f4f6fb';
+    } else {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      root.setAttribute('data-theme', 'dark');
+      document.body.style.backgroundColor = '#0b0e1b';
+    }
+    window.dispatchEvent(new CustomEvent('ns_theme_updated', { detail: theme }));
+  }, [theme]);
+
+  // Listen for open energy modal custom events
+  useEffect(() => {
+    const handleOpenEnergyModal = () => setIsEnergyModalOpen(true);
+    window.addEventListener('ns_open_energy_modal', handleOpenEnergyModal);
+    return () => window.removeEventListener('ns_open_energy_modal', handleOpenEnergyModal);
+  }, []);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   useEffect(() => {
     if (sessionStorage.getItem('ns_splash_seen')) return;
@@ -267,7 +309,8 @@ export default function App() {
     if (profile.contacts?.[0]?.phone) {
       window.location.href = `tel:${profile.contacts[0].phone}`;
     } else {
-      alert(profile.language === 'es' ? 'Configura un contacto de emergencia.' : 'Set up an emergency contact.');
+      setEmergencyWarning(true);
+      setTimeout(() => setEmergencyWarning(false), 5000);
     }
   };
 
@@ -282,9 +325,12 @@ export default function App() {
           <Home 
             energy={energy} 
             language={profile.language} 
+            theme={theme}
             onNavigate={setScreen} 
             onOpenEnergy={() => setIsEnergyModalOpen(true)} 
             onOpenMenu={() => setIsMenuOpen(true)}
+            onToggleTheme={handleToggleTheme}
+            onOpenInstallModal={() => setIsInstallModalOpen(true)}
           />
         );
       case 'anchor':
@@ -362,8 +408,10 @@ export default function App() {
         return (
           <Settings 
             profile={profile}
+            theme={theme}
             onUpdate={handleUpdateProfile}
             onToggleSensitivity={handleToggleSensitivity}
+            onToggleTheme={handleToggleTheme}
             onBack={() => setScreen('home')}
             onOpenInstallModal={() => setIsInstallModalOpen(true)}
           />
@@ -373,23 +421,55 @@ export default function App() {
           <Home 
             energy={energy} 
             language={profile.language} 
+            theme={theme}
             onNavigate={setScreen} 
             onOpenEnergy={() => setIsEnergyModalOpen(true)} 
             onOpenMenu={() => setIsMenuOpen(true)}
+            onToggleTheme={handleToggleTheme}
+            onOpenInstallModal={() => setIsInstallModalOpen(true)}
           />
         );
     }
   };
+
   return (
-    <div className="h-[100dvh] w-full bg-gradient-to-br from-[#1a1c2c] via-[#4a192c] to-[#121212] text-slate-200 font-sans overflow-hidden select-none flex flex-col">
+    <div className="h-[100dvh] w-full bg-transparent text-slate-100 font-sans overflow-hidden select-none flex flex-col transition-colors">
       {storageFull && (
-        <div role="alert" className="fixed top-0 inset-x-0 z-[100] bg-amber-500 text-slate-950 text-xs font-bold p-3 text-center">
+        <div role="alert" className="fixed top-0 inset-x-0 z-[180] bg-amber-500 text-slate-950 text-xs font-bold p-3 text-center shadow-lg">
           {profile.language === 'es'
             ? 'No se pudo guardar: el almacenamiento del dispositivo está lleno. Borra fotos o datos que no uses.'
             : 'Could not save: device storage is full. Remove photos or data you do not use.'}
-          <button onClick={() => setStorageFull(false)} className="ml-3 underline">OK</button>
+          <button onClick={() => setStorageFull(false)} className="ml-3 underline cursor-pointer">OK</button>
         </div>
       )}
+
+      {emergencyWarning && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed top-3 inset-x-4 max-w-sm mx-auto z-[190] bg-rose-950/95 border border-rose-500/50 p-4 rounded-2xl text-white shadow-2xl flex items-center justify-between gap-3"
+        >
+          <div className="text-xs">
+            <p className="font-bold text-rose-300">
+              {profile.language === 'es' ? 'Contacto no configurado' : 'No contact configured'}
+            </p>
+            <p className="text-[11px] text-slate-300 mt-0.5">
+              {profile.language === 'es' ? 'Por favor ingresa un contacto en Ajustes.' : 'Please add a contact in Settings.'}
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              setEmergencyWarning(false);
+              setScreen('settings');
+            }}
+            className="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold text-xs shrink-0 cursor-pointer"
+          >
+            {profile.language === 'es' ? 'Configurar' : 'Configure'}
+          </button>
+        </motion.div>
+      )}
+
       <AnimatePresence mode="wait">
         <div key={screen} className="flex-1 h-full overflow-hidden w-full max-w-md mx-auto relative flex flex-col">
           <Suspense fallback={null}>{renderScreen()}</Suspense>
@@ -403,17 +483,25 @@ export default function App() {
             onClose={() => setIsMenuOpen(false)} 
             profile={profile} 
             energy={energy} 
+            theme={theme}
             onNavigate={setScreen} 
             onOpenEnergy={() => setIsEnergyModalOpen(true)} 
             onToggleLanguage={handleToggleLanguage}
+            onToggleTheme={handleToggleTheme}
           />
         )}
         {isEnergyModalOpen && (
-          <EnergyModal language={profile.language} onSetEnergy={handleSetEnergy} onClose={() => setIsEnergyModalOpen(false)} 
+          <EnergyModal 
+            language={profile.language} 
+            onSetEnergy={handleSetEnergy} 
+            onClose={() => setIsEnergyModalOpen(false)} 
           />
         )}
         {activeCard && (
-          <FullCardOverlay language={profile.language} card={activeCard} onClose={() => setActiveCard(null)} 
+          <FullCardOverlay 
+            language={profile.language} 
+            card={activeCard} 
+            onClose={() => setActiveCard(null)} 
           />
         )}
       </AnimatePresence>

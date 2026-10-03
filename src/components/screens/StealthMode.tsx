@@ -278,11 +278,11 @@ export default function StealthMode({ language, onBack, onNavigate }: StealthMod
                       <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-300 shrink-0">
                         <Volume2 size={18} />
                       </div>
-                      <div className="min-w-0">
-                        <span className="text-xs font-black block truncate text-indigo-200 uppercase tracking-tight">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold block text-indigo-200 tracking-tight">
                           {language === 'es' ? 'Tonos Isocrónicos' : 'Isochronic Tones'}
                         </span>
-                        <span className="text-[10px] text-slate-400 block truncate font-medium">
+                        <span className="text-[11px] text-slate-400 block font-medium">
                           {language === 'es' ? 'Ondas Alfa de calma' : 'Calming Alpha Waves'}
                         </span>
                       </div>
@@ -294,15 +294,15 @@ export default function StealthMode({ language, onBack, onNavigate }: StealthMod
                     onClick={() => onNavigate('haptic')}
                     className="p-4 rounded-[24px] bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/30 text-left flex items-center justify-between text-white active:scale-98 transition-all cursor-pointer group shadow-lg"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
                       <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 shrink-0">
                         <Radio size={18} />
                       </div>
-                      <div className="min-w-0">
-                        <span className="text-xs font-black block truncate text-cyan-200 uppercase tracking-tight">
+                      <div className="min-w-0 flex-1">
+                        <span className="text-xs font-bold block text-cyan-200 tracking-tight">
                           {language === 'es' ? 'Regulación Háptica' : 'Haptic Regulation'}
                         </span>
-                        <span className="text-[10px] text-slate-400 block truncate font-medium">
+                        <span className="text-[11px] text-slate-400 block font-medium">
                           {language === 'es' ? 'Disrupción táctil continua' : 'Tactile grounding pulse'}
                         </span>
                       </div>
@@ -352,7 +352,7 @@ export default function StealthMode({ language, onBack, onNavigate }: StealthMod
                       : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border-cyan-500/30 shadow-lg'
                   }`}
                 >
-                  <span className="truncate">
+                  <span className="leading-tight">
                     {isPressingHands ? t.pressHandsHolding : t.pressHandsAction}
                   </span>
                   <span className="font-mono text-sm">

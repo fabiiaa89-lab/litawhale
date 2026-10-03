@@ -10,7 +10,7 @@ interface CaveProps {
 export default function Cave({ language, onExit }: CaveProps) {
   const t = i18n[language].cave;
   return (
-    <div className="absolute inset-0 bg-black z-50 flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-black via-indigo-950 to-black">
+    <div className="fixed inset-0 z-[200] w-screen h-screen bg-[#030308] flex flex-col items-center justify-center text-center p-6 bg-gradient-to-br from-black via-[#060614] to-black select-none touch-none">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

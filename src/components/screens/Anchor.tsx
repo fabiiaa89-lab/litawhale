@@ -305,7 +305,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
         </AnimatePresence>
 
         {/* External Map Action Links */}
-        <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-2.5 bg-black/30">
+        <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-3 gap-2 bg-black/30">
           <a
             href={googleMapsUrl}
             target="_blank"
@@ -313,7 +313,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
             className="p-3 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-2 text-white font-bold text-xs border border-white/10 text-center"
           >
             <Map size={14} className="text-cyan-400 shrink-0" />
-            <span className="truncate">Google Maps</span>
+            <span className="whitespace-nowrap">Google Maps</span>
             <ExternalLink size={11} className="text-slate-400 shrink-0" />
           </a>
 
@@ -324,23 +324,23 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
             className="p-3 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-2 text-white font-bold text-xs border border-white/10 text-center"
           >
             <Navigation size={14} className="text-blue-400 shrink-0" />
-            <span className="truncate">Apple Maps</span>
+            <span className="whitespace-nowrap">Apple Maps</span>
             <ExternalLink size={11} className="text-slate-400 shrink-0" />
           </a>
 
           <button
             onClick={handleShareLocation}
-            className="col-span-2 sm:col-span-1 p-3 rounded-2xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-95 transition-all flex items-center justify-center gap-2 text-cyan-200 font-bold text-xs border border-cyan-500/30 cursor-pointer"
+            className="p-3 rounded-2xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-95 transition-all flex items-center justify-center gap-2 text-cyan-200 font-bold text-xs border border-cyan-500/30 cursor-pointer"
           >
             {copied ? (
               <>
-                <Check size={14} className="text-emerald-400" />
-                <span className="text-emerald-300 font-bold">{language === 'es' ? '¡Copiado!' : 'Copied!'}</span>
+                <Check size={14} className="text-emerald-400 shrink-0" />
+                <span className="text-emerald-300 font-bold whitespace-nowrap">{language === 'es' ? '¡Copiado!' : 'Copied!'}</span>
               </>
             ) : (
               <>
-                <Share2 size={14} className="text-cyan-400" />
-                <span className="truncate">{t.shareLocation || (language === 'es' ? 'Compartir' : 'Share')}</span>
+                <Share2 size={14} className="text-cyan-400 shrink-0" />
+                <span className="whitespace-nowrap">{language === 'es' ? 'Compartir Ubicación' : 'Share Location'}</span>
               </>
             )}
           </button>

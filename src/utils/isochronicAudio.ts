@@ -220,7 +220,7 @@ class IsochronicAudioEngine {
   }
 
   public startPreset(preset: IsochronicPreset) {
-    this.stop(); // Stop any ongoing sound
+    this.stop(true); // Stop any ongoing sound immediately to prevent oscillator race condition
 
     const ctx = this.getContext();
     const now = ctx.currentTime;
@@ -345,36 +345,56 @@ class IsochronicAudioEngine {
     }
   }
 
-  public stop() {
-    if (!this.isPlaying) return;
-
-    if (this.ctx && this.masterGain) {
-      const now = this.ctx.currentTime;
-      this.masterGain.gain.linearRampToValueAtTime(0, now + 0.4);
-
-      setTimeout(() => {
-        try {
-          if (this.carrierOsc) {
-            this.carrierOsc.stop();
-            this.carrierOsc.disconnect();
-            this.carrierOsc = null;
-          }
-          if (this.lfo) {
-            this.lfo.stop();
-            this.lfo.disconnect();
-            this.lfo = null;
-          }
-          if (this.ambientNoiseSource) {
-            this.ambientNoiseSource.stop();
-            this.ambientNoiseSource.disconnect();
-            this.ambientNoiseSource = null;
-          }
-        } catch (e) {}
-      }, 450);
-    }
+  public stop(immediate = false) {
+    if (!this.isPlaying && !this.carrierOsc) return;
 
     this.isPlaying = false;
     this.currentPresetId = null;
+
+    const oldCarrier = this.carrierOsc;
+    const oldLfo = this.lfo;
+    const oldAmbient = this.ambientNoiseSource;
+    const oldMaster = this.masterGain;
+    const oldAnalyser = this.analyser;
+
+    this.carrierOsc = null;
+    this.lfo = null;
+    this.ambientNoiseSource = null;
+    this.masterGain = null;
+    this.analyser = null;
+
+    const cleanup = () => {
+      try {
+        if (oldCarrier) {
+          oldCarrier.stop();
+          oldCarrier.disconnect();
+        }
+        if (oldLfo) {
+          oldLfo.stop();
+          oldLfo.disconnect();
+        }
+        if (oldAmbient) {
+          oldAmbient.stop();
+          oldAmbient.disconnect();
+        }
+        if (oldMaster) {
+          oldMaster.disconnect();
+        }
+        if (oldAnalyser) {
+          oldAnalyser.disconnect();
+        }
+      } catch (e) {}
+    };
+
+    if (immediate || !this.ctx || !oldMaster) {
+      cleanup();
+    } else {
+      const now = this.ctx.currentTime;
+      try {
+        oldMaster.gain.linearRampToValueAtTime(0, now + 0.35);
+      } catch (e) {}
+      setTimeout(cleanup, 400);
+    }
   }
 }
 

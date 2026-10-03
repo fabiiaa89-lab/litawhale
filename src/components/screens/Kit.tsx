@@ -3,6 +3,7 @@ import { AMAZON_TAG } from '../../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language } from '../../types';
+import { getAmazonDomainForCountry } from '../../utils/currency';
 import { 
   Package, 
   ExternalLink, 
@@ -193,7 +194,13 @@ export default function Kit({ language, onBack }: KitProps) {
   ];
 
   const getAmazonUrl = (tool: SensoryTool) => {
-    const base = 'https://www.amazon.com/s';
+    let country: string | undefined;
+    try {
+      const p = localStorage.getItem('ns_profile');
+      if (p) country = JSON.parse(p)?.country;
+    } catch (e) {}
+    const domain = getAmazonDomainForCountry(country);
+    const base = `https://${domain}/s`;
     const query = encodeURIComponent(tool.searchTerm);
     if (affiliateTag) {
       return `${base}?k=${query}&tag=${encodeURIComponent(affiliateTag)}`;

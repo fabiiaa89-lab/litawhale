@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Profile, Language, Screen } from '../../types';
 import Header from '../Header';
 import { motion, AnimatePresence } from 'motion/react';
@@ -31,6 +31,18 @@ export default function NeuralCortex({ profile, language, onBack, onNavigate }: 
   });
   const [demoAllowed, setDemoAllowed] = useState(false);
   const [aiConsent, setAiConsent] = useState<boolean>(() => localStorage.getItem('ns_ai_consent') === 'true');
+
+  useEffect(() => {
+    const handleProSync = () => {
+      setIsPro(localStorage.getItem('ns_is_pro') === 'true');
+    };
+    window.addEventListener('ns_pro_updated', handleProSync);
+    window.addEventListener('storage', handleProSync);
+    return () => {
+      window.removeEventListener('ns_pro_updated', handleProSync);
+      window.removeEventListener('storage', handleProSync);
+    };
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;

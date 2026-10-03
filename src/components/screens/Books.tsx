@@ -3,6 +3,7 @@ import { AMAZON_TAG, HOTMART_REF } from '../../constants';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language } from '../../types';
+import { getAmazonDomainForCountry } from '../../utils/currency';
 import { 
   BookOpen, 
   ExternalLink, 
@@ -183,7 +184,13 @@ export default function Books({ language, onBack }: BooksProps) {
   };
 
   const getAmazonUrl = (book: BookItem) => {
-    const base = 'https://www.amazon.com/s';
+    let country: string | undefined;
+    try {
+      const p = localStorage.getItem('ns_profile');
+      if (p) country = JSON.parse(p)?.country;
+    } catch (e) {}
+    const domain = getAmazonDomainForCountry(country);
+    const base = `https://${domain}/s`;
     const query = encodeURIComponent(book.amazonSearchTerm);
     if (amazonTag) {
       return `${base}?k=${query}&tag=${encodeURIComponent(amazonTag)}`;

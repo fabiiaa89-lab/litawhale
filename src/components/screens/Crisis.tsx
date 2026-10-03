@@ -44,6 +44,7 @@ export default function Crisis({
   const t = i18n[language].crisis;
   const [isIdeationModalOpen, setIsIdeationModalOpen] = useState(false);
   const [showWhatsAppConsent, setShowWhatsAppConsent] = useState(false);
+  const [noContactAlert, setNoContactAlert] = useState(false);
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
@@ -68,7 +69,7 @@ export default function Crisis({
 
   const handleOpenWhatsApp = () => {
     if (!emergencyContact?.phone) {
-      alert(isSpanish ? "Configura un contacto de emergencia con teléfono en Ajustes." : "Please set an emergency contact phone in Settings.");
+      setNoContactAlert(true);
       return;
     }
     setShowWhatsAppConsent(true);
@@ -83,7 +84,7 @@ export default function Crisis({
       profile.address,
       language
     );
-    window.open(url, '_blank');
+    window.location.href = url;
     setShowWhatsAppConsent(false);
   };
 
@@ -354,9 +355,9 @@ export default function Crisis({
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <LifeBuoy size={18} className="text-cyan-400 shrink-0" />
-                      <div className="text-left min-w-0">
-                        <div className="font-bold text-white text-xs truncate">{helpline.name}</div>
-                        <div className="text-[10px] text-cyan-300 font-medium truncate">
+                      <div className="text-left min-w-0 flex-1">
+                        <div className="font-bold text-white text-xs leading-tight">{helpline.name}</div>
+                        <div className="text-[10px] text-cyan-300 font-medium leading-tight mt-0.5">
                           {isSpanish ? 'Emergencia congruente con tu ubicación GPS' : 'Emergency line matched to your GPS location'}
                         </div>
                       </div>
@@ -470,6 +471,45 @@ export default function Crisis({
                   {isSpanish ? 'Cancelar' : 'Cancel'}
                 </button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+        {/* No Contact Alert Modal */}
+        {noContactAlert && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setNoContactAlert(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#161828] border border-rose-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+                <Phone size={24} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {isSpanish ? 'Sin contacto registrado' : 'No emergency contact'}
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  {isSpanish
+                    ? 'No has guardado un teléfono de emergencia todavía. Puedes configurarlo en cualquier momento desde Ajustes.'
+                    : 'You have not saved an emergency contact phone yet. You can add one in Settings.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNoContactAlert(false)}
+                className="w-full py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-colors"
+              >
+                {isSpanish ? 'Entendido' : 'Got it'}
+              </button>
             </motion.div>
           </motion.div>
         )}

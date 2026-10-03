@@ -91,6 +91,7 @@ export default function SensoryLog({ language, onBack }: SensoryLogProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterType, setFilterType] = useState<string>('all');
   const [copiedReport, setCopiedReport] = useState(false);
+  const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
 
   // Form state
   const [formDate, setFormDate] = useState(() => new Date().toISOString().split('T')[0]);
@@ -162,8 +163,13 @@ export default function SensoryLog({ language, onBack }: SensoryLogProps) {
   };
 
   const handleDeleteEntry = (id: string) => {
-    if (window.confirm(isEs ? '¿Deseas eliminar este registro de la bitácora?' : 'Delete this log entry?')) {
-      setEntries(prev => prev.filter(e => e.id !== id));
+    setDeleteCandidateId(id);
+  };
+
+  const confirmDeleteEntry = () => {
+    if (deleteCandidateId) {
+      setEntries(prev => prev.filter(e => e.id !== deleteCandidateId));
+      setDeleteCandidateId(null);
       hapticEngine.triggerImpact('light');
     }
   };
@@ -762,6 +768,54 @@ export default function SensoryLog({ language, onBack }: SensoryLogProps) {
                   {isEs ? 'Guardar en mi Bitácora' : 'Save to Journal'}
                 </button>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+        {/* Delete Entry Confirmation Modal */}
+        {deleteCandidateId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setDeleteCandidateId(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#161828] border border-rose-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+                <Trash2 size={24} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {isEs ? '¿Eliminar este registro?' : 'Delete log entry?'}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {isEs
+                    ? '¿Deseas eliminar este episodio de sobrecarga de tu bitácora?'
+                    : 'Do you want to delete this overload entry from your journal?'}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteCandidateId(null)}
+                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  {isEs ? 'Cancelar' : 'Cancel'}
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDeleteEntry}
+                  className="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-rose-500/20 cursor-pointer"
+                >
+                  {isEs ? 'Eliminar' : 'Delete'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

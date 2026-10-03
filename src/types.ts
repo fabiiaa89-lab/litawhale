@@ -11,6 +11,8 @@ export type SensitivityProfile = 'HIPO' | 'MED' | 'HIPER';
 
 export type Language = 'es' | 'en';
 
+export type AppTheme = 'dark' | 'light';
+
 export interface Contact {
   name: string;
   phone: string;
@@ -38,6 +40,7 @@ export interface Profile {
   country?: string;
   currency?: string;
   currencySymbol?: string;
+  theme?: AppTheme;
 }
 
 export interface Med {

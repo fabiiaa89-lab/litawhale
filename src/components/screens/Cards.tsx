@@ -26,6 +26,8 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
   const [editingCard, setEditingCard] = useState<AACCard | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [manageMode, setManageMode] = useState<'edit' | 'delete' | null>(null);
+  const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
+  const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
 
   // Form states
   const [formIcon, setFormIcon] = useState('🗣️');
@@ -59,15 +61,23 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
   };
 
   const handleDeleteCard = (id: string) => {
-    if (confirm(t.deleteConfirm || (language === 'es' ? '¿Deseas eliminar esta tarjeta?' : 'Do you want to delete this card?'))) {
-      onUpdateCards(cards.filter(c => c.id !== id));
+    setDeleteCandidateId(id);
+  };
+
+  const confirmDeleteCard = () => {
+    if (deleteCandidateId) {
+      onUpdateCards(cards.filter(c => c.id !== deleteCandidateId));
+      setDeleteCandidateId(null);
     }
   };
 
   const handleRestoreDefaults = () => {
-    if (confirm(language === 'es' ? '¿Restaurar las tarjetas predeterminadas originales?' : 'Restore original default cards?')) {
-      onUpdateCards(i18n[language].aacCards);
-    }
+    setIsRestoreConfirmOpen(true);
+  };
+
+  const confirmRestoreDefaults = () => {
+    onUpdateCards(i18n[language].aacCards);
+    setIsRestoreConfirmOpen(false);
   };
 
   const handleSaveCard = (e: React.FormEvent) => {
@@ -413,6 +423,101 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+        {/* Delete Card Confirmation Modal */}
+        {deleteCandidateId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setDeleteCandidateId(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#161828] border border-rose-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+                <Trash2 size={24} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {language === 'es' ? '¿Eliminar tarjeta AAC?' : 'Delete AAC card?'}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {t.deleteConfirm || (language === 'es' ? '¿Deseas eliminar esta tarjeta de comunicación?' : 'Do you want to delete this communication card?')}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteCandidateId(null)}
+                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  {t.cancel || 'Cancelar'}
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDeleteCard}
+                  className="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-rose-500/20 cursor-pointer"
+                >
+                  {language === 'es' ? 'Eliminar' : 'Delete'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Restore Defaults Confirmation Modal */}
+        {isRestoreConfirmOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setIsRestoreConfirmOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#161828] border border-cyan-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-400">
+                <RotateCcw size={24} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {language === 'es' ? '¿Restaurar tarjetas predeterminadas?' : 'Restore default cards?'}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {language === 'es'
+                    ? 'Se restablecerán las tarjetas básicas originales del sistema en tu idioma.'
+                    : 'The original default communication cards will be restored.'}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsRestoreConfirmOpen(false)}
+                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                >
+                  {t.cancel || 'Cancelar'}
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmRestoreDefaults}
+                  className="py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+                >
+                  {language === 'es' ? 'Restaurar' : 'Restore'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

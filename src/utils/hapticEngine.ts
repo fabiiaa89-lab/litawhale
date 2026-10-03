@@ -8,6 +8,7 @@ class HapticEngine {
   private audioCtx: AudioContext | null = null;
   private isHolding = false;
   private loopTimeout: any = null;
+  private stepTimeouts: any[] = [];
   private currentPattern: number[] = [];
 
   private getAudioContext(): AudioContext {
@@ -98,11 +99,12 @@ class HapticEngine {
         if (accumulatedTime === 0) {
           this.playTactilePulse(duration);
         } else {
-          setTimeout(() => {
+          const timeoutId = setTimeout(() => {
             if (this.isHolding) {
               this.playTactilePulse(duration);
             }
           }, accumulatedTime);
+          this.stepTimeouts.push(timeoutId);
         }
       }
       accumulatedTime += duration;
@@ -144,6 +146,8 @@ class HapticEngine {
       clearTimeout(this.loopTimeout);
       this.loopTimeout = null;
     }
+    this.stepTimeouts.forEach(t => clearTimeout(t));
+    this.stepTimeouts = [];
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
       try {
         navigator.vibrate(0);

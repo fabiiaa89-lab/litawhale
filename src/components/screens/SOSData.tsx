@@ -101,8 +101,8 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-0.5">{t.urgent}</p>
-                  <p className="text-lg font-black text-white uppercase tracking-tight truncate">{emergencyContact?.name || t.noContact}</p>
-                  <p className="text-emerald-400 font-bold text-xs truncate">{emergencyContact?.phone || ""}</p>
+                  <p className="text-base sm:text-lg font-black text-white uppercase tracking-tight leading-snug break-words">{emergencyContact?.name || t.noContact}</p>
+                  <p className="text-emerald-400 font-bold text-xs leading-snug break-all">{emergencyContact?.phone || ""}</p>
                 </div>
              </div>
 

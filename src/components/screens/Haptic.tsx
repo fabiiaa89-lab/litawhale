@@ -184,7 +184,7 @@ export default function Haptic({ language, onBack }: HapticProps) {
               {/* Text info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-black text-white text-lg tracking-tight truncate">
+                  <span className="font-bold text-white text-base sm:text-lg tracking-tight leading-snug">
                     {item.title}
                   </span>
                   <span 

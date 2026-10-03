@@ -3,10 +3,16 @@
 
 const MAX_BODY_CHARS = 32 * 1024; // tamaño máximo del cuerpo de la petición
 const MAX_PROMPT_CHARS = 12000;   // largo máximo del prompt (el perfil sensorial va dentro)
-const DEFAULT_MODEL = 'gemini-2.5-flash'; // usa el MISMO modelo que tenías en la línea 8 de gemini.js
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 // Reglas de seguridad fijas en el servidor (el navegador no puede alterarlas)
 const SAFETY_INSTRUCTION = `Eres un apoyo de regulación para una persona autista. No des diagnósticos ni cambies dosis de medicamentos. Si la persona menciona ideas de hacerse daño o de suicidio, responde con calma, pídele que contacte a su persona de confianza o a la línea de ayuda de su país, y no des detalles de métodos.`;
+
+const corsHeaders = (origin) => ({
+  'Access-Control-Allow-Origin': origin || '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+});
 
 const json = (body, status = 200, extraHeaders = {}) =>
   new Response(JSON.stringify(body), {
@@ -18,22 +24,16 @@ const json = (body, status = 200, extraHeaders = {}) =>
     },
   });
 
-async function handleGemini(request, env) {
-  const url = new URL(request.url);
+async function handleGemini(request, env, origin) {
+  const headers = corsHeaders(origin);
 
   if (request.method !== 'POST') {
-    return json({ error: 'Método no permitido' }, 405, { Allow: 'POST' });
-  }
-
-  // Bloquea llamadas desde otros sitios web (no detiene clientes que no son navegadores).
-  const origin = request.headers.get('Origin');
-  if (origin && origin !== url.origin) {
-    return json({ error: 'Origen no permitido' }, 403);
+    return json({ error: 'Método no permitido' }, 405, { Allow: 'POST', ...headers });
   }
 
   if (!env.GEMINI_API_KEY) {
     console.error('GEMINI_API_KEY no está configurada como secreto');
-    return json({ error: 'Servicio no disponible' }, 503);
+    return json({ error: 'Servicio no disponible' }, 503, headers);
   }
 
   // Límite de solicitudes por IP (binding GEMINI_LIMITER definido en wrangler.jsonc)
@@ -44,7 +44,7 @@ async function handleGemini(request, env) {
       return json(
         { error: 'Demasiadas solicitudes. Intenta de nuevo en un minuto.' },
         429,
-        { 'Retry-After': '60' }
+        { 'Retry-After': '60', ...headers }
       );
     }
   }
@@ -52,21 +52,21 @@ async function handleGemini(request, env) {
   // Lectura y validación del cuerpo
   const raw = await request.text();
   if (raw.length > MAX_BODY_CHARS) {
-    return json({ error: 'Solicitud demasiado grande' }, 413);
+    return json({ error: 'Solicitud demasiado grande' }, 413, headers);
   }
 
   let prompt;
   try {
     ({ prompt } = JSON.parse(raw));
   } catch {
-    return json({ error: 'JSON inválido' }, 400);
+    return json({ error: 'JSON inválido' }, 400, headers);
   }
 
   if (typeof prompt !== 'string' || !prompt.trim()) {
-    return json({ error: 'Falta el campo "prompt"' }, 400);
+    return json({ error: 'Falta el campo "prompt"' }, 400, headers);
   }
   if (prompt.length > MAX_PROMPT_CHARS) {
-    return json({ error: 'El prompt es demasiado largo' }, 413);
+    return json({ error: 'El prompt es demasiado largo' }, 413, headers);
   }
 
   // Llamada a Gemini. La clave va en un header, no en la URL.
@@ -89,27 +89,37 @@ async function handleGemini(request, env) {
     );
 
     if (!upstream.ok) {
-      // Solo se registra el código de estado, nunca el contenido del usuario.
       console.error('Gemini respondió con estado', upstream.status);
       return json(
         { error: 'El servicio de IA no pudo responder' },
-        upstream.status === 429 ? 429 : 502
+        upstream.status === 429 ? 429 : 502,
+        headers
       );
     }
 
-    // Misma forma de respuesta que antes, para no romper el cliente.
     const data = await upstream.json();
-    return json(data);
+    return json(data, 200, headers);
   } catch (error) {
     console.error('Error llamando a Gemini:', error?.name);
-    return json({ error: 'Fallo en el servidor proxy' }, 502);
+    return json({ error: 'Fallo en el servidor proxy' }, 502, headers);
   }
 }
 
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    if (pathname === '/api/gemini') return handleGemini(request, env);
-    return json({ error: 'No encontrado' }, 404);
+    const origin = request.headers.get('Origin');
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders(origin),
+      });
+    }
+
+    if (pathname === '/api/gemini') {
+      return handleGemini(request, env, origin);
+    }
+    return json({ error: 'No encontrado' }, 404, corsHeaders(origin));
   },
 };

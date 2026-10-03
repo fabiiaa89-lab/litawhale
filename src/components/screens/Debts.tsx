@@ -23,6 +23,7 @@ export default function Debts({ debts, language, profile, onUpdate, onBack }: De
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
+  const [deleteCandidateId, setDeleteCandidateId] = useState<string | null>(null);
 
   // Form inputs
   const [creditor, setCreditor] = useState('');
@@ -82,21 +83,41 @@ export default function Debts({ debts, language, profile, onUpdate, onBack }: De
 
   const removeDebt = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (confirm(t.deleteConfirm || '¿Deseas eliminar este compromiso?')) {
-      onUpdate(debts.filter(d => d.id !== id));
+    setDeleteCandidateId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteCandidateId) {
+      onUpdate(debts.filter(d => d.id !== deleteCandidateId));
+      setDeleteCandidateId(null);
     }
+  };
+
+  // Helper to accurately parse number supporting both dot and comma decimals
+  const parseAmountToNumber = (val: string): number => {
+    let clean = val.trim();
+    if (clean.includes(',') && clean.includes('.')) {
+      if (clean.lastIndexOf(',') > clean.lastIndexOf('.')) {
+        clean = clean.replace(/\./g, '').replace(',', '.');
+      } else {
+        clean = clean.replace(/,/g, '');
+      }
+    } else if (clean.includes(',')) {
+      clean = clean.replace(',', '.');
+    }
+    return parseFloat(clean.replace(/[^0-9.]/g, ''));
   };
 
   // Helper to format currency display
   const formatAmounts = (val: string) => {
-    const numeric = parseFloat(val.replace(/[^0-9.]/g, ''));
+    const numeric = parseAmountToNumber(val);
     if (isNaN(numeric)) {
       return { local: `${val} ${currencySymbol}`, usd: `${val} USD` };
     }
-    const localFormatted = `${currencySymbol} ${numeric.toLocaleString()}`;
+    const localFormatted = `${currencySymbol} ${numeric.toLocaleString(language === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
     return {
       local: localFormatted,
-      usd: isUsdDefault ? undefined : `$ ${numeric.toLocaleString()} USD`
+      usd: isUsdDefault ? undefined : `$ ${numeric.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })} USD`
     };
   };
 
@@ -357,6 +378,52 @@ export default function Debts({ debts, language, profile, onUpdate, onBack }: De
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+        {/* Custom Non-blocking Confirmation Modal */}
+        {deleteCandidateId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+            onClick={() => setDeleteCandidateId(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm bg-[#161828] border border-rose-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+                <Trash2 size={24} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">
+                  {language === 'es' ? '¿Eliminar este compromiso?' : 'Delete this commitment?'}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {t.deleteConfirm || (language === 'es' ? 'Esta acción quitará el compromiso de tu lista sin culpa.' : 'This action will remove the commitment without guilt.')}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setDeleteCandidateId(null)}
+                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors"
+                >
+                  {t.cancel || 'Cancelar'}
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDelete}
+                  className="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-rose-500/20"
+                >
+                  {language === 'es' ? 'Eliminar' : 'Delete'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

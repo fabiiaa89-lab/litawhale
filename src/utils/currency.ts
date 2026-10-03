@@ -40,3 +40,16 @@ export function getCountryByName(name?: string): CountryInfo | undefined {
   const lower = name.toLowerCase();
   return COUNTRIES.find(c => c.nameEs.toLowerCase() === lower || c.nameEn.toLowerCase() === lower || c.code.toLowerCase() === lower);
 }
+
+export function getAmazonDomainForCountry(countryNameOrCode?: string): string {
+  if (!countryNameOrCode) return 'www.amazon.com';
+  const c = countryNameOrCode.toLowerCase();
+  if (c.includes('españa') || c.includes('spain') || c === 'es') return 'www.amazon.es';
+  if (c.includes('méxico') || c.includes('mexico') || c === 'mx') return 'www.amazon.com.mx';
+  if (c.includes('reino unido') || c.includes('united kingdom') || c === 'gb' || c === 'uk') return 'www.amazon.co.uk';
+  if (c.includes('canadá') || c.includes('canada') || c === 'ca') return 'www.amazon.ca';
+  if (c.includes('alemania') || c.includes('germany') || c === 'de') return 'www.amazon.de';
+  if (c.includes('francia') || c.includes('france') || c === 'fr') return 'www.amazon.fr';
+  if (c.includes('italia') || c.includes('italy') || c === 'it') return 'www.amazon.it';
+  return 'www.amazon.com';
+}

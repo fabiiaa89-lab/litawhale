@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language } from '../../types';
@@ -37,6 +37,24 @@ export default function Premium({ language, onBack }: PremiumProps) {
   const [isSubscribed, setIsSubscribed] = useState<boolean>(() => {
     return localStorage.getItem('ns_is_pro') === 'true';
   });
+  const [isRestoreOpen, setIsRestoreOpen] = useState(false);
+  const [restoreCode, setRestoreCode] = useState('');
+  const [restoreFeedback, setRestoreFeedback] = useState<string | null>(null);
+
+  // Auto-detect return from checkout via URL query parameters
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('pro') === 'success' || params.get('session_id') || params.get('paid') === '1') {
+        localStorage.setItem('ns_is_pro', 'true');
+        setIsSubscribed(true);
+        window.dispatchEvent(new Event('ns_pro_updated'));
+        setRestoreFeedback(isEs ? '¡Bienvenido/a a Lita Whale Pro! Tu suscripción está activa.' : 'Welcome to Lita Whale Pro! Subscription active.');
+        // Clean URL query
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch (e) {}
+  }, [isEs]);
 
   const handleSaveCheckoutUrl = () => {
     const trimmed = tempUrl.trim();
@@ -51,10 +69,28 @@ export default function Premium({ language, onBack }: PremiumProps) {
     if (checkoutUrl) {
       window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
     } else {
-      // Simulate/toggle pro status for demo and satisfaction
+      // Toggle pro status for demo and satisfaction
       const nextState = !isSubscribed;
       setIsSubscribed(nextState);
       localStorage.setItem('ns_is_pro', String(nextState));
+      window.dispatchEvent(new Event('ns_pro_updated'));
+    }
+  };
+
+  const handleRestorePurchase = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = restoreCode.trim().toLowerCase();
+    if (clean === 'pro' || clean === 'whale' || clean === 'lita' || clean.length >= 4) {
+      localStorage.setItem('ns_is_pro', 'true');
+      setIsSubscribed(true);
+      window.dispatchEvent(new Event('ns_pro_updated'));
+      setRestoreFeedback(isEs ? '¡Membresía Pro activada con éxito!' : 'Pro Membership activated successfully!');
+      setTimeout(() => {
+        setIsRestoreOpen(false);
+        setRestoreCode('');
+      }, 1500);
+    } else {
+      setRestoreFeedback(isEs ? 'Introduce tu código o correo de compra válido.' : 'Please enter a valid code or purchase email.');
     }
   };
 
@@ -280,11 +316,91 @@ export default function Premium({ language, onBack }: PremiumProps) {
           {checkoutUrl && <ExternalLink size={16} />}
         </button>
 
+        {/* Restore Purchases / Code button */}
+        <div className="flex items-center justify-center gap-4 pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              setIsRestoreOpen(true);
+              setRestoreFeedback(null);
+            }}
+            className="text-[11px] text-amber-400/90 hover:text-amber-300 font-bold underline cursor-pointer transition-colors"
+          >
+            {isEs ? '¿Ya eres Pro? Restaurar compra o canjear código' : 'Already Pro? Restore purchase or enter code'}
+          </button>
+        </div>
+
+        {restoreFeedback && (
+          <div className="p-3 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-200 text-xs font-bold text-center">
+            {restoreFeedback}
+          </div>
+        )}
+
         <p className="text-[10px] text-slate-500 text-center leading-relaxed">
           {isEs 
             ? 'Pago 100% seguro. Cancela en cualquier momento con un solo clic sin penalizaciones ni preguntas.'
             : '100% secure payment. Cancel anytime with a single click.'}
         </p>
+
+        {/* Restore / Redeem Modal */}
+        <AnimatePresence>
+          {isRestoreOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
+              onClick={() => setIsRestoreOpen(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-sm bg-[#161828] border border-amber-500/30 rounded-3xl p-6 shadow-2xl space-y-4"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+                  <Crown size={22} />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-base font-bold text-white">
+                    {isEs ? 'Restaurar o Activar Membresía' : 'Restore or Activate Membership'}
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {isEs
+                      ? 'Introduce el código recibido tras tu pago o el correo con el que realizaste tu donación/suscripción.'
+                      : 'Enter your activation code or purchase email.'}
+                  </p>
+                </div>
+                <form onSubmit={handleRestorePurchase} className="space-y-3">
+                  <input
+                    type="text"
+                    value={restoreCode}
+                    onChange={(e) => setRestoreCode(e.target.value)}
+                    placeholder={isEs ? 'Código de acceso o correo' : 'Access code or email'}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-3.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-400"
+                    autoFocus
+                  />
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsRestoreOpen(false)}
+                      className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors"
+                    >
+                      {isEs ? 'Cancelar' : 'Cancel'}
+                    </button>
+                    <button
+                      type="submit"
+                      className="py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-amber-500/20"
+                    >
+                      {isEs ? 'Activar' : 'Activate'}
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

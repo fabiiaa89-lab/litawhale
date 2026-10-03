@@ -1,9 +1,9 @@
 import { useRef, ChangeEvent, useState } from 'react';
-import { Profile, SensitivityProfile } from '../../types';
+import { Profile, SensitivityProfile, AppTheme } from '../../types';
 import Header from '../Header';
 import { motion, AnimatePresence } from 'motion/react';
 import { i18n as translations } from '../../i18n';
-import { User, Shield, Pill, Apple, Sliders, Image as ImageIcon, HeartPulse, Brain, Zap, Target, Upload, Trash2, Camera, Check, Globe, Coins, ChevronDown, Download, Share2, Sparkles, Copy } from 'lucide-react';
+import { User, Shield, Pill, Apple, Sliders, Image as ImageIcon, HeartPulse, Brain, Zap, Target, Upload, Trash2, Camera, Check, Globe, Coins, ChevronDown, Download, Share2, Sparkles, Copy, Sun, Moon } from 'lucide-react';
 import { COUNTRIES, getCountryByCode, getCountryByName } from '../../utils/currency';
 import WhaleLogo from '../WhaleLogo';
 import { downloadSvgFile, downloadPngFromSvg, SVG_LOGO_RAW } from '../../utils/exportLogo';
@@ -11,13 +11,15 @@ import { compressImageFile } from '../../utils/imageCompressor';
 
 interface SettingsProps {
   profile: Profile;
+  theme?: AppTheme;
   onUpdate: (updates: Partial<Profile>) => void;
   onToggleSensitivity: () => void;
+  onToggleTheme?: () => void;
   onBack: () => void;
   onOpenInstallModal?: () => void;
 }
 
-export default function Settings({ profile, onUpdate, onToggleSensitivity, onBack, onOpenInstallModal }: SettingsProps) {
+export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSensitivity, onToggleTheme, onBack, onOpenInstallModal }: SettingsProps) {
   const t = translations[profile.language].settings;
   const isSpanish = profile.language === 'es';
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
@@ -86,9 +88,49 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
           <SectionHeader icon={<Sliders size={14} />} title={t.system} />
           
           <div className="space-y-4">
+            {/* Visual Theme Mode (Claro / Oscuro) */}
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5">
+              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 block">
+                {isSpanish ? "MODO VISUAL / TEMA" : "VISUAL THEME"}
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onToggleTheme && theme !== 'dark') onToggleTheme();
+                    onUpdate({ theme: 'dark' });
+                  }}
+                  className={`py-3 px-3 rounded-xl flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                    theme === 'dark'
+                      ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-md font-bold'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                  }`}
+                >
+                  <Moon size={16} className={theme === 'dark' ? 'text-cyan-400' : 'text-slate-400'} />
+                  <span className="text-xs font-bold">{isSpanish ? "Modo Oscuro" : "Dark Mode"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onToggleTheme && theme !== 'light') onToggleTheme();
+                    onUpdate({ theme: 'light' });
+                  }}
+                  className={`py-3 px-3 rounded-xl flex items-center justify-center gap-2 border transition-all cursor-pointer ${
+                    theme === 'light'
+                      ? 'bg-amber-500/20 border-amber-400 text-slate-900 shadow-md font-bold'
+                      : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                  }`}
+                >
+                  <Sun size={16} className={theme === 'light' ? 'text-amber-500' : 'text-slate-400'} />
+                  <span className="text-xs font-bold">{isSpanish ? "Modo Claro" : "Light Mode"}</span>
+                </button>
+              </div>
+            </div>
+
             <button 
               onClick={toggleLanguage}
-              className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all border border-white/10 text-white font-black flex justify-between px-6 items-center shadow-lg"
+              className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all border border-white/10 text-white font-black flex justify-between px-6 items-center shadow-lg cursor-pointer"
             >
               <span className="text-[10px] uppercase tracking-widest text-slate-400">{t.lang}</span>
               <span className="text-cyan-400 text-sm uppercase">{profile.language}</span>
@@ -426,20 +468,20 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
                   <span>✉️</span>
                   <span>Email</span>
                 </div>
-                <span className="text-emerald-400 font-mono text-[11px] truncate max-w-[140px]">litawhale@gmail.com</span>
+                <span className="text-emerald-400 font-mono text-[11px] break-all">litawhale@gmail.com</span>
               </a>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
             {/* Download SVG */}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => downloadSvgFile('lita-whale-logo-vector.svg')}
-              className="py-3.5 px-4 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2.5 transition-all shadow-md"
+              className="py-3 px-4 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center"
             >
-              <Download size={15} />
-              <span>{isSpanish ? "Descargar Vector (.SVG)" : "Download Vector (.SVG)"}</span>
+              <Download size={15} className="shrink-0" />
+              <span>{isSpanish ? "Descargar Vector (SVG)" : "Download Vector (SVG)"}</span>
             </motion.button>
 
             {/* Download PNG 2048px with dark background */}
@@ -447,10 +489,10 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
               whileTap={{ scale: 0.95 }}
               onClick={() => handleDownloadPng(true, 'avatar')}
               disabled={exportingType === 'avatar'}
-              className="py-3.5 px-4 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 active:scale-95 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2.5 transition-all shadow-md disabled:opacity-50"
+              className="py-3 px-4 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 active:scale-95 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center"
             >
-              <Download size={15} />
-              <span>{exportingType === 'avatar' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "Avatar HD 2048px (PNG)" : "HD Avatar 2048px (PNG)")}</span>
+              <Download size={15} className="shrink-0" />
+              <span>{exportingType === 'avatar' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "Descargar Avatar HD (PNG)" : "Download HD Avatar (PNG)")}</span>
             </motion.button>
 
             {/* Download PNG transparent */}
@@ -458,9 +500,9 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
               whileTap={{ scale: 0.95 }}
               onClick={() => handleDownloadPng(false, 'transparent')}
               disabled={exportingType === 'transparent'}
-              className="py-3.5 px-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold text-xs flex items-center justify-center gap-2.5 transition-all shadow-md disabled:opacity-50"
+              className="py-3 px-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center"
             >
-              <Download size={15} />
+              <Download size={15} className="shrink-0" />
               <span>{exportingType === 'transparent' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "PNG Fondo Transparente" : "Transparent PNG")}</span>
             </motion.button>
 
@@ -468,10 +510,10 @@ export default function Settings({ profile, onUpdate, onToggleSensitivity, onBac
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleCopySvg}
-              className="py-3.5 px-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2.5 transition-all shadow-md"
+              className="py-3 px-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center"
             >
-              {isCopied ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />}
-              <span>{isCopied ? (isSpanish ? "¡Código SVG Copiado!" : "SVG Code Copied!") : (isSpanish ? "Copiar Código SVG (Figma/Canva)" : "Copy SVG Code")}</span>
+              {isCopied ? <Check size={15} className="text-emerald-400 shrink-0" /> : <Copy size={15} className="shrink-0" />}
+              <span>{isCopied ? (isSpanish ? "¡Código Copiado!" : "Code Copied!") : (isSpanish ? "Copiar Código SVG (Figma)" : "Copy SVG Code")}</span>
             </motion.button>
           </div>
         </div>

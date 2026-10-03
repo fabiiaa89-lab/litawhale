@@ -34,29 +34,30 @@ export default function BodyScanner({ profile, language, onBack }: BodyScannerPr
   useEffect(() => {
     if (!isBreathing) return;
 
-    // Reset to start with inhale 4 seconds
+    // Start with inhale 4 seconds
     setBreathPhase('inhale');
     setSecondsRemaining(4);
+
+    let currentPhase: 'inhale' | 'exhale' = 'inhale';
 
     const interval = setInterval(() => {
       setSecondsRemaining(prev => {
         if (prev <= 1) {
-          // Switch phase
-          setBreathPhase(currentPhase => {
-            const nextPhase = currentPhase === 'inhale' ? 'exhale' : 'inhale';
-            if (navigator.vibrate) {
-              navigator.vibrate(nextPhase === 'inhale' ? [40] : [30, 40, 30]);
-            }
-            return nextPhase;
-          });
-          return breathPhase === 'inhale' ? 8 : 4;
+          currentPhase = currentPhase === 'inhale' ? 'exhale' : 'inhale';
+          setBreathPhase(currentPhase);
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            try {
+              navigator.vibrate(currentPhase === 'inhale' ? [40] : [30, 40, 30]);
+            } catch (e) {}
+          }
+          return currentPhase === 'inhale' ? 4 : 8;
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isBreathing, breathPhase]);
+  }, [isBreathing]);
 
   const toggleSymptom = (id: string) => {
     const next = new Set(selected);

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { EnergyLevel, Language } from '../types';
 import { i18n } from '../i18n';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, ExternalLink } from 'lucide-react';
 import { hapticEngine } from '../utils/hapticEngine';
+import { getEnergyVisual } from '../utils/energyVisual';
 
 interface EnergyModalProps {
   language: Language;
@@ -26,13 +27,7 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
     return 8;
   });
 
-  const options: { level: EnergyLevel; icon: string; label: string; spoons: string }[] = [
-    { level: 1, icon: '🪫', label: t.crit, spoons: '0-2 🥄' },
-    { level: 2, icon: '🔋', label: t.low, spoons: '3-5 🥄' },
-    { level: 3, icon: '⚡', label: t.med, spoons: '6-8 🥄' },
-    { level: 4, icon: '✅', label: t.high, spoons: '9-10 🥄' },
-    { level: 5, icon: '🚀', label: t.max, spoons: '11-12 🥄' },
-  ];
+  const levels: EnergyLevel[] = [1, 2, 3, 4, 5];
 
   const syncSpoonsAndEnergy = (newSpoons: number) => {
     const clamped = Math.max(0, Math.min(12, newSpoons));
@@ -51,6 +46,7 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
       parsed.remaining = clamped;
       parsed.lastResetDate = new Date().toISOString().split('T')[0];
       localStorage.setItem('ns_spoons', JSON.stringify(parsed));
+      window.dispatchEvent(new CustomEvent('ns_spoons_updated', { detail: clamped }));
     } catch (e) {}
 
     onSetEnergy(newLevel);
@@ -72,19 +68,27 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
     syncSpoonsAndEnergy(spoons + amount);
   };
 
+  const handleOpenDetailedSpoons = () => {
+    onClose();
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('ns_open_spoon_widget'));
+    }, 150);
+  };
+
   return (
-    <div className="absolute inset-0 z-50 flex items-end bg-black/60 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-md p-0 sm:p-4" onClick={onClose}>
       <motion.div
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
+        transition={{ type: 'spring', damping: 25, stiffness: 240 }}
         onClick={e => e.stopPropagation()}
-        className="w-full bg-slate-900/90 backdrop-blur-[40px] rounded-t-[40px] p-6 sm:p-8 pb-[max(3rem,calc(env(safe-area-inset-bottom,0px)+2rem))] border-t border-white/20 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar space-y-6"
+        className="w-full max-w-md bg-slate-900/95 backdrop-blur-3xl rounded-t-[36px] sm:rounded-[36px] p-6 sm:p-7 pb-[max(2.5rem,calc(env(safe-area-inset-bottom,0px)+1.5rem))] border-t sm:border border-white/15 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar space-y-5"
       >
         <div>
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-slate-100 tracking-tight">{t.title}</h2>
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-cyan-300 border border-white/10">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-100 tracking-tight">{t.title}</h2>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-xs font-bold text-cyan-300 border border-cyan-500/30">
               <span>🥄</span>
               <span>{spoons} / 12 {language === 'es' ? 'cucharas' : 'spoons'}</span>
             </div>
@@ -92,19 +96,29 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
           <p className="text-xs text-slate-400 font-normal mt-1">{t.subtitle}</p>
         </div>
 
-        {/* 5 Cognitive Load Level Buttons */}
+        {/* 5 Cognitive Load Level Buttons with Dynamic Icons */}
         <div className="grid grid-cols-5 gap-2">
-          {options.map(opt => (
-            <button
-              key={opt.level}
-              onClick={() => handleSelectLevel(opt.level)}
-              className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-2.5 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-white/10 transition-colors shadow-lg active:scale-95"
-            >
-              <span className="text-2xl mb-1 drop-shadow-md">{opt.icon}</span>
-              <span className="text-[9px] font-bold text-slate-100 uppercase tracking-wider leading-none">{opt.label}</span>
-              <span className="text-[8px] text-cyan-300 font-semibold mt-1 opacity-80">{opt.spoons}</span>
-            </button>
-          ))}
+          {levels.map(lvl => {
+            const visual = getEnergyVisual(lvl, 20);
+            return (
+              <motion.button
+                key={lvl}
+                whileTap={{ scale: 0.94 }}
+                onClick={() => handleSelectLevel(lvl)}
+                className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-2.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all shadow-md active:scale-95 group"
+              >
+                <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                  {visual.icon}
+                </div>
+                <span className={`text-[10px] font-bold uppercase tracking-wider leading-none mt-0.5 ${visual.color}`}>
+                  {language === 'es' ? visual.labelEs : visual.labelEn}
+                </span>
+                <span className="text-[9px] text-slate-400 font-medium mt-1">
+                  {visual.spoonsRange}
+                </span>
+              </motion.button>
+            );
+          })}
         </div>
 
         {/* Fused Spoon Theory Quick Logger */}
@@ -112,14 +126,14 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
               <span>🥄</span>
-              <span>{tSpoons?.title || 'Teoría de las Cucharas'}</span>
+              <span>{tSpoons?.title || (language === 'es' ? 'Gestión Rápida de Cucharas' : 'Quick Spoons Log')}</span>
             </span>
             <button
               onClick={() => syncSpoonsAndEnergy(12)}
               className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
             >
               <RotateCcw size={11} />
-              <span>{tSpoons?.reset || 'Reiniciar (12)'}</span>
+              <span>{tSpoons?.reset || (language === 'es' ? 'Reiniciar (12)' : 'Reset (12)')}</span>
             </button>
           </div>
 
@@ -138,42 +152,62 @@ export default function EnergyModal({ language, onSetEnergy, onClose }: EnergyMo
             })}
           </div>
 
-          {/* Quick Spoon Action Chips */}
+          {/* Quick Spoon Action Chips without truncation */}
           <div className="grid grid-cols-4 gap-1.5 pt-1">
             <button
               onClick={() => handleSpend(1)}
-              className="py-2 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer"
+              className="py-2.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer flex flex-col items-center justify-center"
             >
               <div className="text-amber-300 font-bold">-1 🥄</div>
-              <div className="text-[9px] text-slate-400 truncate">{language === 'es' ? 'Leve' : 'Minor'}</div>
+              <div className="text-[10px] sm:text-xs text-slate-300 font-medium leading-tight mt-0.5 whitespace-nowrap">
+                {language === 'es' ? 'Leve' : 'Minor'}
+              </div>
             </button>
+
             <button
               onClick={() => handleSpend(2)}
-              className="py-2 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer"
+              className="py-2.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer flex flex-col items-center justify-center"
             >
               <div className="text-amber-400 font-bold">-2 🥄</div>
-              <div className="text-[9px] text-slate-400 truncate">{language === 'es' ? 'Media' : 'Med'}</div>
+              <div className="text-[10px] sm:text-xs text-slate-300 font-medium leading-tight mt-0.5 whitespace-nowrap">
+                {language === 'es' ? 'Media' : 'Med'}
+              </div>
             </button>
+
             <button
               onClick={() => handleSpend(3)}
-              className="py-2 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer"
+              className="py-2.5 px-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center text-xs text-slate-200 font-medium active:scale-95 transition-all cursor-pointer flex flex-col items-center justify-center"
             >
               <div className="text-rose-400 font-bold">-3 🥄</div>
-              <div className="text-[9px] text-slate-400 truncate">{language === 'es' ? 'Pesada' : 'Heavy'}</div>
+              <div className="text-[10px] sm:text-xs text-slate-300 font-medium leading-tight mt-0.5 whitespace-nowrap">
+                {language === 'es' ? 'Pesada' : 'Heavy'}
+              </div>
             </button>
+
             <button
               onClick={() => handleRecharge(1)}
-              className="py-2 px-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-center text-xs text-cyan-200 font-medium active:scale-95 transition-all cursor-pointer"
+              className="py-2.5 px-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-center text-xs text-cyan-200 font-medium active:scale-95 transition-all cursor-pointer flex flex-col items-center justify-center"
             >
               <div className="text-cyan-300 font-bold">+1 🥄</div>
-              <div className="text-[9px] text-cyan-400/80 truncate">{language === 'es' ? 'Recarga' : 'Rest'}</div>
+              <div className="text-[10px] sm:text-xs text-cyan-300 font-medium leading-tight mt-0.5 whitespace-nowrap">
+                {language === 'es' ? 'Recarga' : 'Rest'}
+              </div>
             </button>
           </div>
         </div>
 
+        {/* Detailed spoons manager trigger */}
+        <button
+          onClick={handleOpenDetailedSpoons}
+          className="w-full py-3 px-4 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-400/25 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+        >
+          <span>{language === 'es' ? 'Abrir Panel Completo de Cucharas' : 'Open Full Spoons Manager'}</span>
+          <ExternalLink size={14} />
+        </button>
+
         <button
           onClick={onClose}
-          className="w-full py-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-semibold text-sm shadow-xl transition-colors cursor-pointer"
+          className="w-full py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-sm shadow-md transition-colors cursor-pointer"
         >
           {t.close}
         </button>
