@@ -435,7 +435,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-[100dvh] w-full bg-transparent text-slate-100 font-sans overflow-hidden select-none flex flex-col transition-colors">
+    <div className="h-[100dvh] w-full bg-transparent text-slate-100 font-sans overflow-hidden select-none flex flex-col transition-colors pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       {storageFull && (
         <div role="alert" className="fixed top-0 inset-x-0 z-[180] bg-amber-500 text-slate-950 text-xs font-bold p-3 text-center shadow-lg">
           {profile.language === 'es'
