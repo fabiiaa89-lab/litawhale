@@ -79,15 +79,27 @@ export default function Home({
         </div>
 
         <div className="flex gap-2 shrink-0 items-center">
+          
+          {/* Botón del Córtex Externo */}
+          <motion.button
+            whileTap={{ scale: 0.94 }}
+            onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
+            className="h-9 sm:h-10 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-md cursor-pointer"
+            aria-label="Abrir Córtex Externo"
+          >
+            <Bot size={16} className="text-indigo-400" />
+            <span className="hidden sm:inline">Córtex</span>
+          </motion.button>
+
           {/* Elemental Vitality Pill: Spoons Balance */}
           <motion.button 
             whileTap={{ scale: 0.94 }}
             onClick={onOpenEnergy}
-            className={`h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${spoonPillStyle}`}
+            className={`h-9 sm:h-10 px-3 rounded-xl border flex items-center justify-center gap-1 text-xs font-bold transition-all shadow-md cursor-pointer ${spoonPillStyle}`}
             title={`Cucharas disponibles: ${spoons}/12`}
             aria-label="Cucharas y energía"
           >
-            <span>🥄</span>
+            <span className="mr-0.5">🥄</span>
             <span className="tabular-nums font-black">{spoons}</span>
             <span className="text-[10px] opacity-60">/ 12</span>
           </motion.button>
@@ -102,7 +114,7 @@ export default function Home({
             <Menu size={18} />
           </motion.button>
         </div>
-      </div>
+      </div>>
 
       {/* Scrollable Content with Safe Mobile Margins */}
       <div className="flex-1 flex flex-col gap-3.5 overflow-y-auto no-scrollbar px-4 sm:px-6 pt-3 pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
