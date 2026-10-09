@@ -70,7 +70,7 @@ export default function SplashScreen({ language, onDismiss }: SplashScreenProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6, duration: 0.8 }}
-        className="absolute bottom-10 text-center space-y-5 z-10 pointer-events-none"
+        className="absolute bottom-10 text-center space-y-12 z-10 pointer-events-none"
       >
         <p className="text-[11px] text-slate-400 font-medium tracking-widest animate-pulse">
           {isEs ? 'TOCA PARA ENTRAR' : 'TAP TO ENTER'}
