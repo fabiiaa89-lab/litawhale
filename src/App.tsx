@@ -190,11 +190,11 @@ export default function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
+  // Escuchador del evento del Córtex Externo (Activado desde el Header)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setScreen(prev => (prev === 'splash' ? 'home' : prev));
-    }, 2400);
-    return () => clearTimeout(timer);
+    const handleOpenCortex = () => setScreen('ai');
+    window.addEventListener('open_cortex', handleOpenCortex);
+    return () => window.removeEventListener('open_cortex', handleOpenCortex);
   }, []);
 
   useEffect(() => {
@@ -377,7 +377,7 @@ export default function App() {
           />
         );
       case 'splash':
-        return <SplashScreen language={profile.language} />;
+        return <SplashScreen language={profile.language} onDismiss={() => setScreen('home')} />;
       case 'sos':
         return <SOSData language={profile.language} profile={profile} onBack={() => setScreen('home')} onCall={callEmergency} />;
       case 'ai':
