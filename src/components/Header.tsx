@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Brain } from 'lucide-react';
 import { motion } from 'motion/react';
 import WhaleLogo from './WhaleLogo';
 import { EnergyLevel, AppTheme } from '../types';
@@ -106,20 +106,33 @@ export default function Header({
         </h2>
       </div>
 
-      {/* Right: Elemental Vitality & Spoons Pill */}
-      <div className="flex items-center gap-2 shrink-0">
-        <motion.button
-          whileTap={{ scale: 0.94 }}
-          onClick={handleEnergyClick}
-          className={`h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${spoonPillStyle}`}
-          title={`Vitalidad Autonómica: ${activeLevel}/5 · ${currentSpoons}/12 Cucharas`}
-          aria-label="Abrir santuario de energía y cucharas"
-        >
-          <span>🥄</span>
-          <span className="tabular-nums font-black">{currentSpoons}</span>
-          <span className="text-[10px] opacity-60">/ 12</span>
-        </motion.button>
-      </div>
-    </div>
+      {/* Right: Cortex Button & Spoons Pill */}
+   <div className="flex items-center gap-2 shrink-0">
+
+     {/* Botón del Córtex Externo */}
+     <motion.button
+       whileTap={{ scale: 0.94 }}
+       onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
+       className="h-9 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-sm cursor-pointer"
+       aria-label="Abrir Córtex Externo"
+     >
+       <Brain size={14} />
+       <span className="hidden sm:inline">Córtex</span>
+     </motion.button>
+
+     {/* Medidor de Cucharas (Tu código original) */}
+     <motion.button
+       whileTap={{ scale: 0.94 }}
+       onClick={handleEnergyClick}
+       className={`h-9 px-3 rounded-xl border flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm cursor-pointer ${spoonPillStyle}`}
+       title={`Vitalidad Autonómica: ${activeLevel}/5 · ${currentSpoons}/12 Cucharas`}
+       aria-label="Abrir santuario de energía y cucharas"
+     >
+       <span>🥄</span>
+       <span className="tabular-nums font-black">{currentSpoons}</span>
+       <span className="text-[10px] opacity-60">/ 12</span>
+     </motion.button>
+   </div>
+ </div>
   );
 }
