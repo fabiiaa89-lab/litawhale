@@ -40,7 +40,6 @@ export default function Home({
   const isEs = language === 'es';
   const t = i18n[language].home;
 
-  // Read current spoons from localStorage
   const spoons = (() => {
     try {
       const saved = localStorage.getItem('ns_spoons');
@@ -52,7 +51,6 @@ export default function Home({
     return 12;
   })();
 
-  // Autonomic state styling for the spoons pill
   const spoonPillStyle = spoons > 6 
     ? 'border-cyan-500/30 text-cyan-300 dark:text-cyan-300 light:text-cyan-800 bg-cyan-500/10 dark:bg-cyan-500/10 light:bg-cyan-50' 
     : spoons > 2 
@@ -114,7 +112,7 @@ export default function Home({
             <Menu size={18} />
           </motion.button>
         </div>
-      </div>>
+      </div>
 
       {/* Scrollable Content with Safe Mobile Margins */}
       <div className="flex-1 flex flex-col gap-3.5 overflow-y-auto no-scrollbar px-4 sm:px-6 pt-3 pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
