@@ -98,9 +98,10 @@ export default function Crisis({
           number={1} 
           title={t.step1}
           text={t.step1Text}
-          bg="bg-rose-950/25 border-rose-500/30"
-          textColor="text-rose-200"
-          subColor="text-rose-300/90"
+          bg="bg-rose-500/10 dark:bg-rose-950/30 light:bg-rose-50 border-rose-400/40 dark:border-rose-500/40 light:border-rose-200"
+          badgeBg="bg-rose-600 text-white shadow-rose-600/30"
+          textColor="text-rose-700 dark:text-rose-300 light:text-rose-900"
+          subColor="text-slate-700 dark:text-rose-100/90 light:text-slate-800"
         />
 
         {/* Step 2 */}
@@ -108,9 +109,10 @@ export default function Crisis({
           number={2} 
           title={t.step2}
           text={t.step2Text}
-          bg="bg-slate-900/40 border-slate-700/50"
-          textColor="text-slate-200"
-          subColor="text-slate-400"
+          bg="bg-cyan-500/10 dark:bg-cyan-950/30 light:bg-cyan-50 border-cyan-400/40 dark:border-cyan-500/40 light:border-cyan-200"
+          badgeBg="bg-cyan-600 text-white shadow-cyan-600/30"
+          textColor="text-cyan-800 dark:text-cyan-300 light:text-cyan-950"
+          subColor="text-slate-700 dark:text-cyan-100/90 light:text-slate-800"
         />
 
         {/* Step 3 */}
@@ -118,9 +120,10 @@ export default function Crisis({
           number={3} 
           title={t.step3}
           text={t.step3Text}
-          bg="bg-slate-900/40 border-slate-700/50"
-          textColor="text-slate-200"
-          subColor="text-slate-400"
+          bg="bg-purple-500/10 dark:bg-purple-950/30 light:bg-purple-50 border-purple-400/40 dark:border-purple-500/40 light:border-purple-200"
+          badgeBg="bg-purple-600 text-white shadow-purple-600/30"
+          textColor="text-purple-800 dark:text-purple-300 light:text-purple-950"
+          subColor="text-slate-700 dark:text-purple-100/90 light:text-slate-800"
         />
 
         {/* Ideation Protocol Banner (Interactive Button) */}
@@ -160,12 +163,12 @@ export default function Crisis({
           <motion.button 
             whileTap={{ scale: 0.93 }}
             onClick={onCallEmergency} 
-            className="glass-card hover:bg-white/10 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 shadow-xl group min-h-[110px]"
+            className="glass-card hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-50 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 dark:border-white/10 light:border-slate-200 shadow-xl group min-h-[110px]"
           >
-            <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-500 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Phone size={20} className="stroke-[2.5]" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-200 leading-tight">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 light:text-slate-900 leading-tight">
               {t.emergency}
             </span>
           </motion.button>
@@ -174,12 +177,12 @@ export default function Crisis({
           <motion.button 
             whileTap={{ scale: 0.93 }}
             onClick={onActivateCave} 
-            className="glass-card hover:bg-white/10 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 shadow-xl group min-h-[110px]"
+            className="glass-card hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-50 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 dark:border-white/10 light:border-slate-200 shadow-xl group min-h-[110px]"
           >
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-500 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Moon size={20} className="stroke-[2.5]" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-200 leading-tight">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 light:text-slate-900 leading-tight">
               {t.cave}
             </span>
           </motion.button>
@@ -188,12 +191,12 @@ export default function Crisis({
           <motion.button 
             whileTap={{ scale: 0.93 }}
             onClick={onNavigateHaptic} 
-            className="glass-card hover:bg-white/10 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 shadow-xl group min-h-[110px]"
+            className="glass-card hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-50 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 dark:border-white/10 light:border-slate-200 shadow-xl group min-h-[110px]"
           >
-            <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Activity size={20} className="stroke-[2.5]" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-200 leading-tight">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 light:text-slate-900 leading-tight">
               {t.haptic}
             </span>
           </motion.button>
@@ -209,12 +212,12 @@ export default function Crisis({
                 ? 'ESTOY EN CRISIS SENSORIAL / MELTDOWN.\n\nPOR FAVOR, DAME SILENCIO, ESPACIO Y NO ME TOQUES.' 
                 : 'I AM EXPERIENCING SENSORY OVERLOAD / MELTDOWN.\n\nPLEASE GIVE ME SILENCE, SPACE AND DO NOT TOUCH ME.' 
             })} 
-            className="glass-card hover:bg-white/10 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 shadow-xl group min-h-[110px]"
+            className="glass-card hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-50 p-5 rounded-[28px] flex flex-col items-center justify-center gap-2.5 active:scale-95 transition-all text-center border-white/10 dark:border-white/10 light:border-slate-200 shadow-xl group min-h-[110px]"
           >
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
               <MessageSquare size={20} className="stroke-[2.5]" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-200 leading-tight">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 light:text-slate-900 leading-tight">
               {t.showCard}
             </span>
           </motion.button>
@@ -234,20 +237,20 @@ export default function Crisis({
               initial={{ y: 60, scale: 0.95 }}
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 60, scale: 0.95 }}
-              className="bg-[#191528] border border-rose-500/40 rounded-[32px] p-6 w-full max-w-lg shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto no-scrollbar"
+              className="bg-white dark:bg-[#191528] border-2 border-rose-300 dark:border-rose-500/40 rounded-[32px] p-6 w-full max-w-lg shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto no-scrollbar text-left"
             >
               {/* Modal Header */}
-              <div className="flex items-start justify-between border-b border-rose-500/20 pb-4">
+              <div className="flex items-start justify-between border-b border-rose-200 dark:border-rose-500/20 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center border border-rose-500/30 shrink-0">
+                  <div className="w-11 h-11 rounded-2xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-400/40 shrink-0">
                     <HeartHandshake size={24} />
                   </div>
                   <div>
-                    <h3 className="font-black text-white text-base leading-tight">
+                    <h3 className="font-black text-slate-900 dark:text-white text-base sm:text-lg leading-tight">
                       {t.ideationModal?.title || 'Protocolo de Seguridad & Desescalada'}
                     </h3>
-                    <p className="text-[11px] font-bold text-rose-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
-                      <MapPin size={12} className="text-cyan-400" />
+                    <p className="text-[11px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider mt-0.5 flex items-center gap-1.5">
+                      <MapPin size={12} className="text-cyan-600 dark:text-cyan-400" />
                       <span>
                         {helpline.country ? `${isSpanish ? 'Ubicación GPS' : 'GPS Location'}: ${helpline.country}` : (isSpanish ? 'Sobrecarga Detectada' : 'Overload Detected')}
                       </span>
@@ -255,49 +258,50 @@ export default function Crisis({
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsIdeationModalOpen(false)}
-                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
 
               {/* Neurological Truth Statement */}
-              <div className="bg-rose-950/40 border border-rose-500/30 rounded-2xl p-4.5 space-y-2">
-                <div className="text-[10px] font-black text-rose-300 uppercase tracking-widest flex items-center gap-1.5">
-                  <AlertTriangle size={13} className="text-rose-400 shrink-0" />
+              <div className="bg-rose-50 dark:bg-rose-950/40 border-2 border-rose-200 dark:border-rose-500/30 rounded-2xl p-4.5 space-y-2">
+                <div className="text-[10px] font-black text-rose-700 dark:text-rose-300 uppercase tracking-widest flex items-center gap-1.5">
+                  <AlertTriangle size={13} className="text-rose-600 dark:text-rose-400 shrink-0" />
                   <span>{t.ideationModal?.truthTitle || 'RECUERDA ESTA VERDAD NEUROLÓGICA:'}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-rose-100 font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-rose-950 dark:text-rose-100 font-bold leading-relaxed">
                   {t.ideationModal?.truthText || 'Tu cerebro está experimentando una sobrecarga sensorial y emocional máxima. Tu sistema nervioso busca desconectarse del dolor, no del valor de tu vida. Esto es un estado temporal y va a ceder.'}
                 </p>
               </div>
 
               {/* Step by step sensory de-escalation */}
               <div className="space-y-2.5">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <p className="text-[11px] font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest">
                   {t.ideationModal?.actionStepsTitle || 'PASOS DE RESCATE INMEDIATO'}
                 </p>
                 
-                <div className="space-y-2 text-xs text-slate-200">
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
-                    <Waves size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-                    <div>{t.ideationModal?.stepA}</div>
+                <div className="space-y-2 text-xs sm:text-sm">
+                  <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
+                    <Waves size={18} className="text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+                    <div className="text-slate-800 dark:text-slate-100 font-bold leading-snug">{t.ideationModal?.stepA}</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
-                    <Moon size={16} className="text-indigo-400 shrink-0 mt-0.5" />
-                    <div>{t.ideationModal?.stepB}</div>
+                  <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
+                    <Moon size={18} className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                    <div className="text-slate-800 dark:text-slate-100 font-bold leading-snug">{t.ideationModal?.stepB}</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
-                    <LifeBuoy size={16} className="text-rose-400 shrink-0 mt-0.5" />
-                    <div>{t.ideationModal?.stepC}</div>
+                  <div className="p-3.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-start gap-3 shadow-sm">
+                    <LifeBuoy size={18} className="text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                    <div className="text-slate-800 dark:text-slate-100 font-bold leading-snug">{t.ideationModal?.stepC}</div>
                   </div>
                 </div>
               </div>
 
               {/* Contact Actions: Call or WhatsApp */}
               <div className="space-y-2.5 pt-2">
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <div className="text-[11px] font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest">
                   {isSpanish ? 'CONTACTAR APOYO SEGURO' : 'SAFE SUPPORT CONTACT'}
                 </div>
 
@@ -314,8 +318,9 @@ export default function Crisis({
 
                     {/* WhatsApp Option */}
                     <button
+                      type="button"
                       onClick={handleOpenWhatsApp}
-                      className="py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 active:scale-95 transition-all"
+                      className="py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
                     >
                       <Send size={16} />
                       <span>WhatsApp (GPS)</span>
@@ -323,8 +328,9 @@ export default function Crisis({
                   </div>
                 ) : (
                   <button
+                    type="button"
                     onClick={onCallEmergency}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-rose-600/30 active:scale-95 transition-all"
+                    className="w-full py-3.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-rose-600/30 active:scale-95 transition-all cursor-pointer"
                   >
                     <Phone size={18} />
                     <span>{t.ideationModal?.callContact || 'Llamar a Contacto de Apoyo'}</span>
@@ -332,7 +338,7 @@ export default function Crisis({
                 )}
 
                 {!detectedCountry && !profile.country && (
-                  <p className="text-[11px] text-amber-300 px-1">
+                  <p className="text-[11px] text-amber-600 dark:text-amber-300 font-medium px-1">
                     {isSpanish
                       ? 'Elige tu país en Ajustes para ver tu línea de ayuda local, o busca una en findahelpline.com.'
                       : 'Choose your country in Settings to see your local helpline, or search at findahelpline.com.'}
@@ -341,28 +347,28 @@ export default function Crisis({
 
                 {/* Localized Helpline button matching user's GPS country */}
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[10px] font-bold text-cyan-400 px-1">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-cyan-700 dark:text-cyan-400 px-1">
                     <span className="flex items-center gap-1 uppercase tracking-widest">
                       <Globe size={11} />
                       {isSpanish ? 'Línea del País (GPS)' : 'Country Hotline (GPS)'}: {helpline.country}
                     </span>
-                    {isLocating && <span className="animate-pulse text-slate-400">{isSpanish ? 'Detectando...' : 'Detecting...'}</span>}
+                    {isLocating && <span className="animate-pulse text-slate-500 dark:text-slate-400">{isSpanish ? 'Detectando...' : 'Detecting...'}</span>}
                   </div>
 
                   <a
                     href={`tel:${helpline.number.replace(/[^0-9]/g, '') || helpline.number}`}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-white/10 hover:bg-white/15 border border-cyan-500/30 text-white font-bold text-xs flex items-center justify-between active:scale-95 transition-all shadow-md"
+                    className="w-full py-3.5 px-4 rounded-2xl bg-cyan-50/80 dark:bg-white/10 hover:bg-cyan-100 dark:hover:bg-white/15 border border-cyan-300 dark:border-cyan-500/30 text-slate-900 dark:text-white font-bold text-xs flex items-center justify-between active:scale-95 transition-all shadow-md"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <LifeBuoy size={18} className="text-cyan-400 shrink-0" />
+                      <LifeBuoy size={18} className="text-cyan-600 dark:text-cyan-400 shrink-0" />
                       <div className="text-left min-w-0 flex-1">
-                        <div className="font-bold text-white text-xs leading-tight">{helpline.name}</div>
-                        <div className="text-[10px] text-cyan-300 font-medium leading-tight mt-0.5">
+                        <div className="font-black text-slate-900 dark:text-white text-xs leading-tight">{helpline.name}</div>
+                        <div className="text-[10px] text-cyan-800 dark:text-cyan-300 font-semibold leading-tight mt-0.5">
                           {isSpanish ? 'Emergencia congruente con tu ubicación GPS' : 'Emergency line matched to your GPS location'}
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs font-black text-cyan-300 bg-cyan-500/20 px-3 py-1 rounded-xl border border-cyan-500/30 shrink-0 ml-2">
+                    <span className="text-xs font-black text-white dark:text-cyan-300 bg-cyan-600 dark:bg-cyan-500/20 px-3 py-1 rounded-xl border border-cyan-500/40 shrink-0 ml-2 shadow-sm">
                       {helpline.number}
                     </span>
                   </a>
@@ -523,6 +529,7 @@ function CrisisStep({
   title, 
   text, 
   bg, 
+  badgeBg = "bg-rose-600 text-white",
   textColor, 
   subColor 
 }: { 
@@ -530,17 +537,21 @@ function CrisisStep({
   title: string; 
   text: string; 
   bg: string; 
+  badgeBg?: string;
   textColor: string; 
   subColor: string; 
 }) {
   return (
-    <div className={`${bg} border backdrop-blur-xl rounded-3xl p-5 relative overflow-hidden shadow-lg`}>
-      <div className="absolute -right-4 -top-8 text-8xl font-black opacity-5 italic select-none">{number}</div>
-      <div className="flex items-center gap-3 mb-2 relative z-10">
-        <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white shrink-0">
+    <div className={`${bg} border backdrop-blur-xl rounded-3xl p-5 sm:p-6 relative overflow-hidden shadow-lg transition-all`}>
+      {/* Big prominent watermark number visible cleanly in both light and dark mode */}
+      <div className="absolute right-3 -bottom-3 text-7xl sm:text-8xl font-black italic select-none pointer-events-none text-slate-900/10 dark:text-white/10 leading-none">
+        {number}
+      </div>
+      <div className="flex items-center gap-3.5 mb-2.5 relative z-10">
+        <div className={`w-8 h-8 rounded-2xl flex items-center justify-center text-sm font-black shadow-md shrink-0 ${badgeBg}`}>
           {number}
         </div>
-        <div className={`text-sm font-black tracking-widest uppercase ${textColor}`}>
+        <div className={`text-sm sm:text-base font-black tracking-wider uppercase ${textColor}`}>
           {title}
         </div>
       </div>

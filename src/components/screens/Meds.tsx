@@ -17,7 +17,10 @@ import {
   Sun, 
   Moon, 
   HelpCircle,
-  AlertTriangle
+  AlertTriangle,
+  Pill,
+  CircleDot,
+  Leaf
 } from 'lucide-react';
 
 import { hapticEngine } from '../../utils/hapticEngine';
@@ -170,18 +173,18 @@ export default function Meds({ meds, language, onUpdateMeds, onConfirm, onAdd, o
     }
   };
 
-  const getEmoji = (iconType?: string) => {
+  const renderMedIcon = (iconType?: string) => {
     switch (iconType) {
-      case 'tablet': return '⚪';
-      case 'drops': return '💧';
-      case 'supplement': return '🌿';
-      case 'sos': return '🚨';
-      default: return '💊';
+      case 'tablet': return <CircleDot size={20} className="text-cyan-400" />;
+      case 'drops': return <Droplets size={20} className="text-blue-400" />;
+      case 'supplement': return <Leaf size={20} className="text-emerald-400" />;
+      case 'sos': return <Zap size={20} className="text-amber-400" />;
+      default: return <Pill size={20} className="text-indigo-400" />;
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0d0f18] overflow-hidden relative">
+    <div className="flex flex-col h-full bg-transparent overflow-hidden relative">
       <Header title={t.title} onBack={onBack} />
       
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
@@ -237,8 +240,8 @@ export default function Meds({ meds, language, onUpdateMeds, onConfirm, onAdd, o
                 exit={{ opacity: 0, scale: 0.95 }}
                 className={`relative rounded-3xl border transition-all duration-300 p-5 shadow-xl overflow-hidden ${
                   med.confirmed
-                    ? 'bg-gradient-to-br from-[#0e2a22]/80 via-[#112620]/60 to-[#0e1f1c]/90 border-emerald-500/40 shadow-emerald-950/30'
-                    : 'bg-gradient-to-br from-[#161a2b]/90 via-[#1a1e33]/80 to-[#121524]/95 border-white/15 hover:border-cyan-500/40'
+                    ? 'bg-gradient-to-br from-[#0e2a22]/80 via-[#112620]/60 to-[#0e1f1c]/90 dark:from-[#0e2a22]/80 light:from-emerald-50 light:via-white light:to-emerald-50 border-emerald-500/40 dark:border-emerald-500/40 light:border-emerald-300 shadow-emerald-950/30'
+                    : 'bg-gradient-to-br from-[#161a2b]/90 via-[#1a1e33]/80 to-[#121524]/95 dark:from-[#161a2b]/90 light:from-white light:via-slate-50 light:to-white border-white/15 dark:border-white/15 light:border-slate-200 hover:border-cyan-500/40'
                 }`}
               >
                 {/* Celebration Overlay */}
@@ -276,12 +279,12 @@ export default function Meds({ meds, language, onUpdateMeds, onConfirm, onAdd, o
                         ? 'bg-emerald-500/20 border-emerald-400/30 text-emerald-300' 
                         : 'bg-cyan-500/15 border-cyan-400/30 text-cyan-300'
                     }`}>
-                      {getEmoji(med.icon)}
+                      {renderMedIcon(med.icon)}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className={`font-black text-base uppercase tracking-tight truncate ${
-                          med.confirmed ? 'text-emerald-300' : 'text-white'
+                          med.confirmed ? 'text-emerald-400 dark:text-emerald-300 light:text-emerald-800' : 'text-white dark:text-white light:text-slate-900'
                         }`}>
                           {med.name}
                         </h3>

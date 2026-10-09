@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { Profile, Language } from '../../types';
 import Header from '../Header';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Phone, Droplets, Octagon, Zap, Send, MapPin, Check } from 'lucide-react';
+import { ShieldAlert, Phone, Droplets, AlertOctagon, Zap, Send, MapPin, Check, User } from 'lucide-react';
 import { i18n } from '../../i18n';
 import { buildWhatsAppEmergencyUrl } from '../../utils/emergency';
 
@@ -45,64 +45,89 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
   };
   
   return (
-    <div className="absolute inset-0 z-[150] bg-rose-950 flex flex-col overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-rose-600/20 to-black/80 pointer-events-none" />
+    <div className="absolute inset-0 z-[150] bg-slate-950 dark:bg-slate-950 light:bg-slate-50 flex flex-col overflow-hidden">
+      {/* Background ambient medical glow */}
+      <div className="absolute inset-0 bg-gradient-to-b from-rose-950/40 via-transparent to-black/60 dark:from-rose-950/40 dark:to-black/60 light:from-rose-100/60 light:to-slate-100 pointer-events-none" />
       
       <div className="relative z-10 flex flex-col h-full bg-transparent overflow-hidden">
         <Header title={t.title} onBack={onBack} />
         
-        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar p-6 flex flex-col items-center text-center space-y-6 pb-12">
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-20 h-20 rounded-full bg-rose-500 flex items-center justify-center shadow-[0_0_40px_rgba(244,63,94,0.6)] shrink-0"
-          >
-            <ShieldAlert size={40} className="text-white" />
-          </motion.div>
+        <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 sm:px-6 pt-4 pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))] flex flex-col items-center space-y-4">
+          
+          {/* Beacon Header Card */}
+          <div className="w-full p-4 sm:p-5 rounded-3xl bg-rose-500/10 dark:bg-rose-500/10 light:bg-white border-2 border-rose-500/35 dark:border-rose-500/35 light:border-rose-300 shadow-xl flex items-center gap-4 text-left">
+            <motion.div
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-rose-500/25 border-2 border-rose-500/60 flex items-center justify-center shadow-[0_0_25px_rgba(244,63,94,0.45)] shrink-0"
+            >
+              <ShieldAlert size={32} className="text-rose-400 dark:text-rose-400 light:text-rose-600" />
+            </motion.div>
 
-          <div className="space-y-2">
-            <h1 className="text-3xl font-black text-white tracking-tighter leading-none whitespace-pre-wrap">
-              {t.alert}
-            </h1>
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-rose-400 dark:text-rose-400 light:text-rose-700 block">
+                {t.badge || (isSpanish ? 'IDENTIDAD NEURODIVERGENTE & APOYO' : 'NEURODIVERGENT IDENTITY & SUPPORT')}
+              </span>
+              <h1 className="text-base sm:text-lg font-black text-white dark:text-white light:text-slate-900 tracking-tight leading-snug mt-1 whitespace-pre-line">
+                {t.alert}
+              </h1>
+              <p className="text-[11px] sm:text-xs text-rose-200/90 dark:text-rose-200/90 light:text-slate-700 font-medium leading-relaxed mt-2">
+                {isSpanish 
+                  ? 'Muestra esta pantalla ante sobrecarga sensorial, crisis o mutismo. Diseñado para adultos autistas y TDAH.'
+                  : 'Show this card during sensory overload, meltdown, or non-verbal states. Designed for autistic and ADHD adults.'}
+              </p>
+            </div>
           </div>
 
+          {/* Vitals Data Cards with Refined Neuro-Accessible Typography */}
           <div className="w-full space-y-3">
             <SOSCard 
-              icon={<Droplets className="text-rose-400" />} 
+              icon={<Droplets size={24} className="text-rose-400" />} 
+              badgeBg="bg-rose-500/20 border-rose-400/30"
               label={t.bloodType} 
-              value={profile.bloodType || "N/A"} 
+              value={profile.bloodType ? profile.bloodType.toUpperCase() : (t.notSpecified || (isSpanish ? 'No especificado' : 'Not specified'))} 
             />
             <SOSCard 
-              icon={<Octagon className="text-rose-400" />} 
+              icon={<AlertOctagon size={24} className="text-amber-400" />} 
+              badgeBg="bg-amber-500/20 border-amber-400/30"
               label={t.allergies} 
               value={profile.allergies || t.none} 
             />
             <SOSCard 
-              icon={<Zap className="text-rose-400" />} 
+              icon={<Zap size={24} className="text-cyan-400" />} 
+              badgeBg="bg-cyan-500/20 border-cyan-400/30"
               label={t.sensitivity} 
               value={`${t.avoid}${profile.hypersensitivities || t.defaultAvoid}`} 
             />
           </div>
 
-          {/* Contact Box with Phone Call and WhatsApp buttons */}
-          <div className="w-full glass-card rounded-[32px] p-5 border-emerald-500/30 bg-emerald-950/20 space-y-4">
-             <div className="flex items-center gap-3 text-left">
+          {/* Emergency Safe Contact Card */}
+          <div className="w-full rounded-3xl p-5 border-2 border-emerald-500/40 bg-emerald-950/20 dark:bg-emerald-950/20 light:bg-emerald-50/80 space-y-4 shadow-xl">
+             <div className="flex items-center gap-3.5 text-left">
                 {profile.contactImage ? (
                   <img 
                     src={profile.contactImage} 
                     alt="Contact" 
-                    className="w-14 h-14 rounded-2xl object-cover border border-white/20 shrink-0 cursor-pointer hover:opacity-90 transition-opacity" 
+                    className="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-400/40 shrink-0 cursor-pointer hover:opacity-90 transition-opacity shadow-md" 
                     onClick={() => setEnlargedImage(profile.contactImage!)}
                     referrerPolicy="no-referrer"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                   />
                 ) : (
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-rose-400 text-2xl shrink-0">👤</div>
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/35 flex items-center justify-center text-emerald-400 shrink-0 shadow-md">
+                    <User size={26} />
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-0.5">{t.urgent}</p>
-                  <p className="text-base sm:text-lg font-black text-white uppercase tracking-tight leading-snug break-words">{emergencyContact?.name || t.noContact}</p>
-                  <p className="text-emerald-400 font-bold text-xs leading-snug break-all">{emergencyContact?.phone || ""}</p>
+                  <span className="text-[10px] font-black text-emerald-400 dark:text-emerald-400 light:text-emerald-800 uppercase tracking-widest block">
+                    {t.urgent}
+                  </span>
+                  <p className="text-base sm:text-lg font-black text-white dark:text-white light:text-slate-900 uppercase tracking-tight leading-snug break-words">
+                    {emergencyContact?.name || t.noContact}
+                  </p>
+                  <p className="text-emerald-300 dark:text-emerald-300 light:text-emerald-700 font-mono font-bold text-xs leading-snug break-all mt-0.5">
+                    {emergencyContact?.phone || ""}
+                  </p>
                 </div>
              </div>
 
@@ -110,26 +135,28 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={onCall}
-                  className="py-3 px-3 rounded-2xl bg-emerald-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  className="py-3.5 px-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 cursor-pointer transition-all"
                 >
-                  <Phone size={18} />
+                  <Phone size={17} />
                   <span>{isSpanish ? 'Llamar' : 'Call'}</span>
                 </motion.button>
 
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowWhatsAppConsent(true)}
-                  className="py-3 px-3 rounded-2xl bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-400/40 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  className="py-3.5 px-3 rounded-2xl bg-emerald-600/80 hover:bg-emerald-600 border border-emerald-400/50 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all"
                 >
-                  <Send size={18} />
+                  <Send size={17} />
                   <span>WhatsApp</span>
                 </motion.button>
              </div>
           </div>
 
+          {/* Exit / Return Button with Accessible Touch Size */}
           <button 
+            type="button"
             onClick={onBack}
-            className="w-full py-5 rounded-[32px] bg-white/5 border border-white/10 text-rose-200 font-black tracking-widest uppercase text-xs active:scale-95 transition-all"
+            className="w-full py-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-200 border border-white/10 dark:border-white/10 light:border-slate-300 text-rose-300 dark:text-rose-300 light:text-slate-700 font-black tracking-wider uppercase text-xs active:scale-95 hover:bg-white/10 transition-all cursor-pointer"
           >
             {t.exit}
           </button>
@@ -165,7 +192,7 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
                 </div>
               </div>
 
-              {/* Explicit User Notice mandated by prompt */}
+              {/* Privacy Notice */}
               <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 space-y-2 text-emerald-100 text-xs leading-relaxed font-medium">
                 <div className="font-black text-emerald-300 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
                   <MapPin size={13} className="text-emerald-400" />
@@ -187,6 +214,7 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
 
               <div className="space-y-2 pt-1">
                 <button
+                  type="button"
                   onClick={handleConfirmWhatsApp}
                   className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
@@ -195,8 +223,9 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setShowWhatsAppConsent(false)}
-                  className="w-full py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="w-full py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
                   {isSpanish ? 'Cancelar' : 'Cancel'}
                 </button>
@@ -230,12 +259,30 @@ export default function SOSData({ profile, language, onBack, onCall }: SOSDataPr
   );
 }
 
-function SOSCard({ icon, label, value }: any) {
+function SOSCard({ 
+  icon, 
+  badgeBg = "bg-rose-500/20 border-rose-400/30", 
+  label, 
+  value 
+}: { 
+  icon: ReactNode; 
+  badgeBg?: string; 
+  label: string; 
+  value: string; 
+}) {
   return (
-    <div className="glass-card rounded-[24px] p-4 border-rose-500/20 bg-rose-950/20 flex flex-col items-center text-center">
-      <div className="mb-1.5">{icon}</div>
-      <p className="text-[9px] font-black text-rose-400 uppercase tracking-[3px] mb-0.5">{label}</p>
-      <p className="text-base font-black text-white uppercase tracking-tight leading-tight">{value}</p>
+    <div className="w-full p-4 rounded-2xl sm:rounded-3xl border border-white/10 dark:border-white/10 light:border-slate-200 bg-white/[0.04] dark:bg-white/[0.04] light:bg-white flex items-center gap-4 text-left shadow-md">
+      <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center shrink-0 shadow-sm ${badgeBg}`}>
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <span className="text-[11px] font-extrabold text-slate-400 dark:text-slate-400 light:text-slate-500 uppercase tracking-wider block">
+          {label}
+        </span>
+        <p className="text-base sm:text-lg font-black text-white dark:text-white light:text-slate-900 tracking-tight leading-snug break-words mt-0.5">
+          {value}
+        </p>
+      </div>
     </div>
   );
 }

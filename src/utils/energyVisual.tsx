@@ -87,3 +87,13 @@ export function spoonsToEnergyLevel(spoons: number): EnergyLevel {
   if (spoons <= 10) return 4;
   return 5;
 }
+
+export function energyLevelToSpoons(level: EnergyLevel): number {
+  switch (level) {
+    case 1: return 2;
+    case 2: return 4;
+    case 3: return 7;
+    case 4: return 10;
+    case 5: default: return 12;
+  }
+}

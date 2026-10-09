@@ -36,9 +36,7 @@ const Books = lazy(() => import('./components/screens/Books'));
 const Premium = lazy(() => import('./components/screens/Premium'));
 
 export default function App() {
-  const [screen, setScreen] = useState<Screen>(
-    () => (sessionStorage.getItem('ns_splash_seen') ? 'home' : 'splash')
-  );
+  const [screen, setScreen] = useState<Screen>('splash');
   const [storageFull, setStorageFull] = useState(false);
   const [emergencyWarning, setEmergencyWarning] = useState(false);
 
@@ -125,14 +123,20 @@ export default function App() {
   });
 
   const [cards, setCards] = useState<AACCard[]>(() => {
+    const defaultCards = i18n[profile.language].aacCards;
     const saved = localStorage.getItem('ns_cards');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length >= 12) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Preserve any custom cards and append new 12 standard cards
+          const customCards = parsed.filter((c: AACCard) => c.isCustom);
+          return [...defaultCards, ...customCards];
+        }
       } catch (e) {}
     }
-    return i18n[profile.language].aacCards;
+    return defaultCards;
   });
 
   const [meds, setMeds] = useState<Med[]>(() => {
@@ -187,11 +191,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem('ns_splash_seen')) return;
     const timer = setTimeout(() => {
-      sessionStorage.setItem('ns_splash_seen', '1');
-      setScreen('home');
-    }, 1200);
+      setScreen(prev => (prev === 'splash' ? 'home' : prev));
+    }, 2400);
     return () => clearTimeout(timer);
   }, []);
 

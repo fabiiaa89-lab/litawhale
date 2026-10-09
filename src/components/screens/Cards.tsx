@@ -3,7 +3,30 @@ import Header from '../Header';
 import { motion, AnimatePresence } from 'motion/react';
 import { AACCard, Language } from '../../types';
 import { i18n } from '../../i18n';
-import { Plus, Edit2, Trash2, Sparkles, X, SlidersHorizontal, ChevronDown, RotateCcw, Check } from 'lucide-react';
+import { 
+  Plus, 
+  Edit2, 
+  Trash2, 
+  Sparkles, 
+  X, 
+  SlidersHorizontal, 
+  ChevronDown, 
+  RotateCcw, 
+  EyeOff,
+  MessageSquareOff,
+  ShieldAlert,
+  Hourglass,
+  HeartHandshake,
+  HeartPulse,
+  MessageSquareHeart,
+  VolumeX,
+  Hand,
+  Droplets,
+  Utensils,
+  Bed,
+  Moon,
+  Volume2
+} from 'lucide-react';
 
 interface CardsProps {
   language: Language;
@@ -13,13 +36,23 @@ interface CardsProps {
   onShowFull: (card: AACCard) => void;
 }
 
-const EMOJI_PRESETS = [
-  '🗣️', '🛑', '🤫', '⏳', '🎧', '💧', '🧠', '⚡', 
-  '🆘', '🫂', '🏠', '🧘', '🧱', '🚫', '🚪', '💤', 
-  '🥤', '💊', '👂', '👁️', '🩹', '🧩', '🕯️', '🌿'
+const VECTOR_PRESETS = [
+  { id: 'noverbal', iconName: 'MessageSquareOff', labelEs: 'No verbal', labelEn: 'Non-verbal' },
+  { id: 'meltdown', iconName: 'ShieldAlert', labelEs: 'Sobrecarga', labelEn: 'Overload' },
+  { id: 'noise', iconName: 'VolumeX', labelEs: 'Ruido', labelEn: 'Noise' },
+  { id: 'space', iconName: 'Hand', labelEs: 'Espacio', labelEn: 'Space' },
+  { id: 'water', iconName: 'Droplets', labelEs: 'Agua', labelEn: 'Water' },
+  { id: 'food', iconName: 'Utensils', labelEs: 'Comida', labelEn: 'Food' },
+  { id: 'rest', iconName: 'Bed', labelEs: 'Descanso', labelEn: 'Rest' },
+  { id: 'slow', iconName: 'Hourglass', labelEs: 'Tiempo', labelEn: 'Time' },
+  { id: 'dissoc', iconName: 'EyeOff', labelEs: 'Disociación', labelEn: 'Dissociation' },
+  { id: 'cave', iconName: 'Moon', labelEs: 'Cueva', labelEn: 'Cave' },
+  { id: 'bathroom', iconName: 'Sparkles', labelEs: 'Baño', labelEn: 'Restroom' },
+  { id: 'med', iconName: 'HeartPulse', labelEs: 'Médico', labelEn: 'Medical' },
 ];
 
 export default function Cards({ language, cards, onUpdateCards, onBack, onShowFull }: CardsProps) {
+  const isEs = language === 'es';
   const t = i18n[language].cards;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +63,7 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
   const [isRestoreConfirmOpen, setIsRestoreConfirmOpen] = useState(false);
 
   // Form states
-  const [formIcon, setFormIcon] = useState('🗣️');
+  const [formIcon, setFormIcon] = useState('MessageSquareOff');
   const [formLabel, setFormLabel] = useState('');
   const [formText, setFormText] = useState('');
 
@@ -46,7 +79,7 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
 
   const openAddModal = () => {
     setEditingCard(null);
-    setFormIcon('🗣️');
+    setFormIcon('MessageSquareOff');
     setFormLabel('');
     setFormText('');
     setIsModalOpen(true);
@@ -54,7 +87,7 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
 
   const openEditModal = (card: AACCard) => {
     setEditingCard(card);
-    setFormIcon(card.icon);
+    setFormIcon(card.icon || 'MessageSquareOff');
     setFormLabel(card.label);
     setFormText(card.text);
     setIsModalOpen(true);
@@ -88,7 +121,7 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
       // Update existing
       const updated = cards.map(c => 
         c.id === editingCard.id 
-          ? { ...c, icon: formIcon || '🗣️', label: formLabel.trim(), text: formText.trim(), isCustom: true } 
+          ? { ...c, icon: formIcon || 'MessageSquareOff', label: formLabel.trim(), text: formText.trim(), isCustom: true } 
           : c
       );
       onUpdateCards(updated);
@@ -96,7 +129,7 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
       // Create new
       const newCard: AACCard = {
         id: 'custom-' + Date.now(),
-        icon: formIcon || '🗣️',
+        icon: formIcon || 'MessageSquareOff',
         label: formLabel.trim(),
         text: formText.trim(),
         isCustom: true
@@ -105,196 +138,303 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
     }
 
     setIsModalOpen(false);
-    setEditingCard(null);
+  };
+
+  // Dedicated Vector Lucide Duotone Icon Resolver for AAC Cards
+  const renderCardIcon = (card: AACCard) => {
+    // Check known IDs or icon names
+    const target = card.id || card.icon;
+
+    switch (target) {
+      case 'noverbal':
+      case 'MessageSquareOff':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/20 dark:bg-purple-500/20 light:bg-purple-100 border border-purple-400/35 dark:border-purple-400/35 light:border-purple-300 flex items-center justify-center text-purple-300 dark:text-purple-300 light:text-purple-700 shadow-sm">
+            <MessageSquareOff size={26} />
+          </div>
+        );
+      case 'meltdown':
+      case 'ShieldAlert':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-rose-500/20 dark:bg-rose-500/20 light:bg-rose-100 border border-rose-400/35 dark:border-rose-400/35 light:border-rose-300 flex items-center justify-center text-rose-300 dark:text-rose-300 light:text-rose-700 shadow-sm">
+            <ShieldAlert size={26} />
+          </div>
+        );
+      case 'noise':
+      case 'VolumeX':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-blue-500/20 dark:bg-blue-500/20 light:bg-blue-100 border border-blue-400/35 dark:border-blue-400/35 light:border-blue-300 flex items-center justify-center text-blue-300 dark:text-blue-300 light:text-blue-700 shadow-sm">
+            <VolumeX size={26} />
+          </div>
+        );
+      case 'space':
+      case 'Hand':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/20 dark:bg-amber-500/20 light:bg-amber-100 border border-amber-400/35 dark:border-amber-400/35 light:border-amber-300 flex items-center justify-center text-amber-300 dark:text-amber-300 light:text-amber-800 shadow-sm">
+            <Hand size={26} />
+          </div>
+        );
+      case 'water':
+      case 'Droplets':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-cyan-500/20 dark:bg-cyan-500/20 light:bg-cyan-100 border border-cyan-400/35 dark:border-cyan-400/35 light:border-cyan-300 flex items-center justify-center text-cyan-300 dark:text-cyan-300 light:text-cyan-800 shadow-sm">
+            <Droplets size={26} />
+          </div>
+        );
+      case 'food':
+      case 'Utensils':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/20 dark:bg-emerald-500/20 light:bg-emerald-100 border border-emerald-400/35 dark:border-emerald-400/35 light:border-emerald-300 flex items-center justify-center text-emerald-300 dark:text-emerald-300 light:text-emerald-800 shadow-sm">
+            <Utensils size={26} />
+          </div>
+        );
+      case 'rest':
+      case 'Bed':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/20 dark:bg-indigo-500/20 light:bg-indigo-100 border border-indigo-400/35 dark:border-indigo-400/35 light:border-indigo-300 flex items-center justify-center text-indigo-300 dark:text-indigo-300 light:text-indigo-700 shadow-sm">
+            <Bed size={26} />
+          </div>
+        );
+      case 'slow':
+      case 'Hourglass':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/20 dark:bg-amber-500/20 light:bg-amber-100 border border-amber-400/35 dark:border-amber-400/35 light:border-amber-300 flex items-center justify-center text-amber-300 dark:text-amber-300 light:text-amber-800 shadow-sm">
+            <Hourglass size={26} />
+          </div>
+        );
+      case 'dissoc':
+      case 'EyeOff':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/20 dark:bg-indigo-500/20 light:bg-indigo-100 border border-indigo-400/35 dark:border-indigo-400/35 light:border-indigo-300 flex items-center justify-center text-indigo-300 dark:text-indigo-300 light:text-indigo-700 shadow-sm">
+            <EyeOff size={26} />
+          </div>
+        );
+      case 'cave':
+      case 'Moon':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-slate-700/40 dark:bg-slate-700/40 light:bg-slate-200 border border-slate-500/35 dark:border-slate-500/35 light:border-slate-300 flex items-center justify-center text-sky-300 dark:text-sky-300 light:text-slate-800 shadow-sm">
+            <Moon size={26} />
+          </div>
+        );
+      case 'bathroom':
+      case 'Sparkles':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-500/20 dark:bg-teal-500/20 light:bg-teal-100 border border-teal-400/35 dark:border-teal-400/35 light:border-teal-300 flex items-center justify-center text-teal-300 dark:text-teal-300 light:text-teal-800 shadow-sm">
+            <Sparkles size={26} />
+          </div>
+        );
+      case 'med':
+      case 'HeartPulse':
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-rose-500/20 dark:bg-rose-500/20 light:bg-rose-100 border border-rose-400/35 dark:border-rose-400/35 light:border-rose-300 flex items-center justify-center text-rose-300 dark:text-rose-300 light:text-rose-700 shadow-sm">
+            <HeartPulse size={26} />
+          </div>
+        );
+      default:
+        return (
+          <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-cyan-500/20 dark:bg-cyan-500/20 light:bg-cyan-100 border border-cyan-400/35 dark:border-cyan-400/35 light:border-cyan-300 flex items-center justify-center text-2xl shadow-sm">
+            {card.icon}
+          </div>
+        );
+    }
   };
 
   return (
     <div className="flex flex-col h-full bg-transparent overflow-hidden">
       <Header title={t.title} onBack={onBack} />
-      
-      <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
-      {/* Subtitle & Manage Dropdown Action */}
-      <div className="px-6 mt-4 flex items-center justify-between gap-3">
-        <div className="min-w-0 pr-2">
-          <p className="text-xs text-slate-300 font-normal leading-relaxed">
-            {language === 'es' 
-              ? 'Toca cualquier tarjeta para comunicarte en pantalla completa.' 
-              : 'Tap any card to communicate in full screen.'}
-          </p>
-        </div>
 
-        {/* Dropdown Menu Button */}
-        <div className="relative shrink-0">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/10 text-slate-200 hover:text-white text-xs font-medium flex items-center gap-2 backdrop-blur-xl transition-all shadow-sm active:scale-95 cursor-pointer"
-          >
-            <SlidersHorizontal size={14} className="text-cyan-400" />
-            <span>{language === 'es' ? 'Gestionar' : 'Manage'}</span>
-            <ChevronDown size={14} className={`text-slate-400 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
-          </motion.button>
-
-          <AnimatePresence>
-            {isMenuOpen && (
-              <>
-                <div className="fixed inset-0 z-30" onClick={() => setIsMenuOpen(false)} />
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-2 w-52 bg-[#161826] border border-white/15 rounded-2xl p-1.5 shadow-2xl z-40 flex flex-col gap-1 backdrop-blur-2xl"
-                >
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setManageMode(null);
-                      openAddModal();
-                    }}
-                    className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-200 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
-                  >
-                    <Plus size={15} className="text-cyan-400" />
-                    <span>{language === 'es' ? 'Crear tarjeta' : 'Create card'}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setManageMode('edit');
-                    }}
-                    className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-200 hover:text-white hover:bg-white/10 flex items-center gap-2.5 transition-colors cursor-pointer"
-                  >
-                    <Edit2 size={14} className="text-indigo-400" />
-                    <span>{language === 'es' ? 'Editar tarjeta' : 'Edit card'}</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setManageMode('delete');
-                    }}
-                    className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-rose-300 hover:text-rose-200 hover:bg-rose-500/10 flex items-center gap-2.5 transition-colors cursor-pointer"
-                  >
-                    <Trash2 size={14} className="text-rose-400" />
-                    <span>{language === 'es' ? 'Eliminar tarjeta' : 'Delete card'}</span>
-                  </button>
-                  <div className="h-px bg-white/10 my-0.5" />
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setManageMode(null);
-                      handleRestoreDefaults();
-                    }}
-                    className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 flex items-center gap-2.5 transition-colors cursor-pointer"
-                  >
-                    <RotateCcw size={13} className="text-slate-400" />
-                    <span>{language === 'es' ? 'Restaurar originales' : 'Restore defaults'}</span>
-                  </button>
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Action banner when in edit or delete mode */}
-      <AnimatePresence>
-        {manageMode && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            className={`mx-6 mt-3 p-3 rounded-2xl flex items-center justify-between text-xs font-medium border ${
-              manageMode === 'edit'
-                ? 'bg-indigo-950/50 border-indigo-500/40 text-indigo-200'
-                : 'bg-rose-950/50 border-rose-500/40 text-rose-200'
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              {manageMode === 'edit' ? <Edit2 size={14} className="text-indigo-400" /> : <Trash2 size={14} className="text-rose-400" />}
-              <span>
-                {manageMode === 'edit'
-                  ? (language === 'es' ? 'Toca la tarjeta que deseas editar' : 'Tap the card you want to edit')
-                  : (language === 'es' ? 'Toca la tarjeta que deseas eliminar' : 'Tap the card you want to delete')}
-              </span>
+      <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 sm:px-6 pt-3 pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))] space-y-4">
+        
+        {/* Intro Sanctuary Card & Action Controls */}
+        <div className="p-4 rounded-3xl bg-teal-500/10 dark:bg-teal-500/10 light:bg-white border border-teal-400/25 dark:border-teal-400/25 light:border-teal-200 shadow-md flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-2xl bg-teal-500/20 dark:bg-teal-500/20 light:bg-teal-100 border border-teal-400/30 dark:border-teal-400/30 light:border-teal-300 flex items-center justify-center shrink-0">
+              <MessageSquareHeart size={20} className="text-teal-400 dark:text-teal-400 light:text-teal-700" />
             </div>
-            <button
-              onClick={() => setManageMode(null)}
-              className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold transition-colors cursor-pointer"
+            <div className="min-w-0">
+              <h2 className="text-sm font-bold text-white dark:text-white light:text-slate-900 tracking-tight leading-tight">
+                {isEs ? 'Comunicador CAA Expresivo' : 'Expressive AAC Communicator'}
+              </h2>
+              <p className="text-[11px] text-teal-300/90 dark:text-teal-300/90 light:text-slate-600 font-medium leading-snug truncate">
+                {isEs ? 'Toca cualquier tarjeta para pantalla completa y voz' : 'Tap any card for full-screen voice'}
+              </p>
+            </div>
+          </div>
+
+          {/* Manage Actions Dropdown */}
+          <div className="relative shrink-0">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="px-3 py-2 rounded-xl bg-white/10 dark:bg-white/10 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-300 text-slate-200 dark:text-slate-200 light:text-slate-700 text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer"
             >
-              {language === 'es' ? 'Cancelar' : 'Cancel'}
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <SlidersHorizontal size={14} className="text-teal-400 dark:text-teal-400 light:text-teal-600" />
+              <span>{isEs ? 'Gestionar' : 'Manage'}</span>
+              <ChevronDown size={14} className={`transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+            </motion.button>
 
-      {/* Cards Grid: Clean, minimalist, and uncluttered */}
-      <div className="grid grid-cols-2 gap-3.5 px-6 mt-4">
-        {cards.map(rawCard => {
-          const card = resolveCard(rawCard);
-          const isEditSelectable = manageMode === 'edit';
-          const isDeleteSelectable = manageMode === 'delete';
+            <AnimatePresence>
+              {isMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setIsMenuOpen(false)} />
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.95 }}
+                    className="absolute right-0 top-full mt-2 w-52 bg-slate-900 dark:bg-slate-900 light:bg-white border border-white/15 dark:border-white/15 light:border-slate-200 rounded-2xl p-1.5 shadow-2xl z-40 flex flex-col gap-1 backdrop-blur-2xl"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setManageMode(null);
+                        openAddModal();
+                      }}
+                      className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-200 dark:text-slate-200 light:text-slate-800 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-100 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <Plus size={15} className="text-teal-400 dark:text-teal-400 light:text-teal-600" />
+                      <span>{isEs ? 'Crear tarjeta' : 'Create card'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setManageMode('edit');
+                      }}
+                      className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-200 dark:text-slate-200 light:text-slate-800 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-100 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <Edit2 size={14} className="text-indigo-400 dark:text-indigo-400 light:text-indigo-600" />
+                      <span>{isEs ? 'Editar tarjeta' : 'Edit card'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setManageMode('delete');
+                      }}
+                      className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-rose-300 dark:text-rose-300 light:text-rose-700 hover:bg-rose-500/10 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={14} className="text-rose-400 dark:text-rose-400 light:text-rose-600" />
+                      <span>{isEs ? 'Eliminar tarjeta' : 'Delete card'}</span>
+                    </button>
+                    <div className="h-px bg-white/10 dark:bg-white/10 light:bg-slate-200 my-0.5" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setManageMode(null);
+                        handleRestoreDefaults();
+                      }}
+                      className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-slate-400 dark:text-slate-400 light:text-slate-600 hover:bg-white/5 dark:hover:bg-white/5 light:hover:bg-slate-100 flex items-center gap-2.5 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw size={13} className="text-slate-400" />
+                      <span>{isEs ? 'Restaurar originales' : 'Restore defaults'}</span>
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
 
-          return (
-            <motion.div 
-              key={card.id}
-              layout
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => {
-                if (manageMode === 'edit') {
-                  openEditModal(card);
-                  setManageMode(null);
-                } else if (manageMode === 'delete') {
-                  handleDeleteCard(card.id);
-                  setManageMode(null);
-                } else {
-                  onShowFull(card);
-                }
-              }}
-              className={`group relative rounded-3xl p-4 flex flex-col items-center justify-between text-center gap-2 cursor-pointer transition-all shadow-md min-h-[160px] border ${
-                isEditSelectable
-                  ? 'bg-indigo-500/15 border-indigo-400/50 hover:border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.25)] ring-1 ring-indigo-400/30'
-                  : isDeleteSelectable
-                  ? 'bg-rose-500/15 border-rose-400/50 hover:border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.25)] ring-1 ring-rose-400/30'
-                  : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-white/20'
+        {/* Action banner when in edit or delete mode */}
+        <AnimatePresence>
+          {manageMode && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              className={`p-3 rounded-2xl flex items-center justify-between text-xs font-medium border ${
+                manageMode === 'edit'
+                  ? 'bg-indigo-950/60 dark:bg-indigo-950/60 light:bg-indigo-50 border-indigo-500/40 text-indigo-200 dark:text-indigo-200 light:text-indigo-900'
+                  : 'bg-rose-950/60 dark:bg-rose-950/60 light:bg-rose-50 border-rose-500/40 text-rose-200 dark:text-rose-200 light:text-rose-900'
               }`}
             >
-              {/* Top subtle category tag */}
-              <div className="w-full flex items-center justify-between">
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400 font-medium">
-                  {card.isCustom ? (language === 'es' ? 'Personalizada' : 'Custom') : 'AAC'}
+              <div className="flex items-center gap-2">
+                {manageMode === 'edit' ? <Edit2 size={14} className="text-indigo-400" /> : <Trash2 size={14} className="text-rose-400" />}
+                <span>
+                  {manageMode === 'edit'
+                    ? (isEs ? 'Toca la tarjeta que deseas editar' : 'Tap the card you want to edit')
+                    : (isEs ? 'Toca la tarjeta que deseas eliminar' : 'Tap the card you want to delete')}
                 </span>
-                {manageMode === 'edit' && (
-                  <span className="text-[10px] text-indigo-400 font-bold flex items-center gap-1">
-                    <Edit2 size={10} /> {language === 'es' ? 'Editar' : 'Edit'}
-                  </span>
-                )}
-                {manageMode === 'delete' && (
-                  <span className="text-[10px] text-rose-400 font-bold flex items-center gap-1">
-                    <Trash2 size={10} /> {language === 'es' ? 'Borrar' : 'Delete'}
-                  </span>
-                )}
               </div>
-
-              {/* Icon */}
-              <div className="text-4xl my-1 group-hover:scale-110 transition-transform drop-shadow">
-                {card.icon}
-              </div>
-
-              {/* Label & Text */}
-              <div className="w-full">
-                <div className="font-bold tracking-tight text-white text-xs sm:text-sm leading-snug line-clamp-2">
-                  {card.label}
-                </div>
-                <p className="text-[10px] text-slate-400 line-clamp-2 mt-1 font-normal opacity-75">
-                  {card.text}
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setManageMode(null)}
+                className="px-2.5 py-1 rounded-xl bg-white/10 dark:bg-white/10 light:bg-slate-200 text-white dark:text-white light:text-slate-900 text-[11px] font-semibold transition-colors cursor-pointer"
+              >
+                {isEs ? 'Cancelar' : 'Cancel'}
+              </button>
             </motion.div>
-          );
-        })}
-      </div>
+          )}
+        </AnimatePresence>
+
+        {/* Cards Grid: Clean, Unified, Option A Oceanic Styling */}
+        <div className="grid grid-cols-2 gap-3.5">
+          {cards.map(rawCard => {
+            const card = resolveCard(rawCard);
+            const isEditSelectable = manageMode === 'edit';
+            const isDeleteSelectable = manageMode === 'delete';
+
+            return (
+              <motion.div 
+                key={card.id}
+                layout
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  if (manageMode === 'edit') {
+                    openEditModal(card);
+                    setManageMode(null);
+                  } else if (manageMode === 'delete') {
+                    handleDeleteCard(card.id);
+                    setManageMode(null);
+                  } else {
+                    onShowFull(card);
+                  }
+                }}
+                className={`group rounded-3xl p-4 sm:p-5 flex flex-col items-center justify-between text-center gap-2.5 cursor-pointer transition-all shadow-md min-h-[175px] border ${
+                  isEditSelectable
+                    ? 'bg-indigo-500/20 border-2 border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.25)]'
+                    : isDeleteSelectable
+                    ? 'bg-rose-500/20 border-2 border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.25)]'
+                    : 'bg-white/[0.04] dark:bg-white/[0.04] light:bg-white hover:bg-white/[0.07] border-white/10 dark:border-white/10 light:border-slate-200'
+                }`}
+              >
+                {/* Category kicker */}
+                <div className="w-full flex items-center justify-between">
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-white/5 dark:bg-white/5 light:bg-slate-100 text-slate-400 dark:text-slate-400 light:text-slate-600 font-bold uppercase tracking-wider">
+                    {card.isCustom ? (isEs ? 'Personal' : 'Custom') : 'CAA'}
+                  </span>
+                  {manageMode === 'edit' && (
+                    <span className="text-[10px] text-indigo-400 font-bold flex items-center gap-1">
+                      <Edit2 size={10} /> {isEs ? 'Editar' : 'Edit'}
+                    </span>
+                  )}
+                  {manageMode === 'delete' && (
+                    <span className="text-[10px] text-rose-400 font-bold flex items-center gap-1">
+                      <Trash2 size={10} /> {isEs ? 'Borrar' : 'Delete'}
+                    </span>
+                  )}
+                </div>
+
+                {/* Vector Duotone Icon Badge */}
+                <div className="my-1 group-hover:scale-106 transition-transform">
+                  {renderCardIcon(card)}
+                </div>
+
+                {/* Label & Text */}
+                <div className="w-full">
+                  <span className="font-bold tracking-tight text-white dark:text-white light:text-slate-900 text-xs sm:text-sm leading-snug line-clamp-2 block">
+                    {card.label}
+                  </span>
+                  <p className="text-[10px] text-slate-300 dark:text-slate-300 light:text-slate-600 line-clamp-2 mt-1 leading-snug font-medium">
+                    {card.text}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
       
       {/* Add / Edit Card Modal */}
@@ -310,163 +450,146 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
               initial={{ y: 50, scale: 0.95 }}
               animate={{ y: 0, scale: 1 }}
               exit={{ y: 50, scale: 0.95 }}
-              className="bg-[#1a1c2c] border border-white/20 rounded-[32px] p-6 w-full max-w-md shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto no-scrollbar"
+              className="bg-slate-900 dark:bg-slate-900 light:bg-white border border-white/20 dark:border-white/20 light:border-slate-300 rounded-[32px] p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center justify-between border-b border-white/10 dark:border-white/10 light:border-slate-200 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                  <div className="w-9 h-9 rounded-2xl bg-teal-500/20 text-teal-400 dark:text-teal-400 light:text-teal-700 flex items-center justify-center border border-teal-500/30">
                     <Sparkles size={18} />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-white text-lg tracking-tight">
-                      {editingCard ? (t.edit || 'Editar Tarjeta') : (t.add || 'Crear Tarjeta')}
-                    </h3>
-                    <p className="text-xs text-slate-300 mt-0.5 font-normal">
-                      {language === 'es' ? 'Configura el texto para mostrar a otras personas' : 'Configure the text to show to others'}
-                    </p>
-                  </div>
+                  <h3 className="font-bold text-white dark:text-white light:text-slate-900 text-base">
+                    {editingCard 
+                      ? (isEs ? 'Editar Tarjeta CAA' : 'Edit AAC Card') 
+                      : (isEs ? 'Nueva Tarjeta CAA' : 'New AAC Card')}
+                  </h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
                   <X size={18} />
                 </button>
               </div>
 
-              {/* Form */}
-              <form onSubmit={handleSaveCard} className="space-y-5">
-                {/* Emoji Selector */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-200 block">
-                    {t.modal?.iconLabel || 'Icono / Emoji'}
+              <form onSubmit={handleSaveCard} className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 dark:text-slate-300 light:text-slate-700 uppercase tracking-wider mb-2">
+                    {isEs ? 'Ícono Vectorial Recomendado' : 'Recommended Vector Icon'}
                   </label>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-3xl shrink-0 shadow-inner">
-                      {formIcon || '🗣️'}
-                    </div>
-                    <input
-                      type="text"
-                      value={formIcon}
-                      onChange={(e) => setFormIcon(e.target.value)}
-                      placeholder="Icono"
-                      maxLength={4}
-                      className="bg-white/5 border border-white/10 rounded-2xl p-3.5 text-center text-xl text-white font-bold w-24 focus:outline-none focus:border-cyan-400"
-                    />
-                  </div>
-
-                  {/* Preset Emojis */}
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {EMOJI_PRESETS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        type="button"
-                        onClick={() => setFormIcon(emoji)}
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg transition-all ${formIcon === emoji ? 'bg-cyan-500/30 border-2 border-cyan-400 scale-110' : 'bg-white/5 hover:bg-white/15 border border-white/10'}`}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-4 gap-2 p-2.5 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-200 max-h-36 overflow-y-auto no-scrollbar">
+                    {VECTOR_PRESETS.map((preset) => {
+                      const isSelected = formIcon === preset.id || formIcon === preset.iconName;
+                      return (
+                        <button
+                          type="button"
+                          key={preset.id}
+                          onClick={() => setFormIcon(preset.id)}
+                          className={`p-2 rounded-xl flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                            isSelected 
+                              ? 'bg-teal-500/30 border-2 border-teal-400 shadow-sm' 
+                              : 'hover:bg-white/10'
+                          }`}
+                        >
+                          <span className="text-teal-300 dark:text-teal-300 light:text-teal-700">
+                            {renderCardIcon({ id: preset.id, icon: preset.iconName, label: '', text: '' })}
+                          </span>
+                          <span className="text-[9px] font-semibold text-slate-300 dark:text-slate-300 light:text-slate-700 truncate w-full text-center">
+                            {isEs ? preset.labelEs : preset.labelEn}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Title / Label */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-200 block">
-                    {t.modal?.titleLabel || 'Título / Etiqueta'}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 dark:text-slate-300 light:text-slate-700 uppercase tracking-wider mb-1.5">
+                    {isEs ? 'Título corto' : 'Short title'}
                   </label>
                   <input
                     type="text"
                     required
                     value={formLabel}
-                    onChange={(e) => setFormLabel(e.target.value)}
-                    placeholder={t.modal?.titlePlaceholder || 'Ej: Sobrecarga Sensorial, Necesito Silencio'}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-3.5 text-white text-sm font-medium focus:outline-none focus:border-cyan-400 transition-colors placeholder:text-slate-500"
+                    onChange={e => setFormLabel(e.target.value)}
+                    placeholder={isEs ? 'Ej. Necesito silencio' : 'e.g., I need silence'}
+                    className="w-full px-4 py-3 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-300 text-white dark:text-white light:text-slate-900 text-sm focus:outline-none focus:border-teal-400"
                   />
                 </div>
 
-                {/* Full Message */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-slate-200 block">
-                    {t.modal?.textLabel || 'Mensaje para Pantalla Completa'}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-300 dark:text-slate-300 light:text-slate-700 uppercase tracking-wider mb-1.5">
+                    {isEs ? 'Mensaje completo' : 'Full message'}
                   </label>
                   <textarea
                     required
-                    rows={4}
+                    rows={3}
                     value={formText}
-                    onChange={(e) => setFormText(e.target.value)}
-                    placeholder={t.modal?.textPlaceholder || 'Ej: Estoy experimentando una crisis sensorial. Por favor, no me hables ni me toques. Necesito 15 minutos de silencio.'}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-3.5 text-white text-sm font-normal focus:outline-none focus:border-cyan-400 transition-colors resize-none leading-relaxed placeholder:text-slate-500"
+                    onChange={e => setFormText(e.target.value)}
+                    placeholder={isEs ? 'Explica lo que necesitas de forma clara y respetuosa...' : 'Explain what you need clearly...'}
+                    className="w-full px-4 py-3 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 border border-white/10 dark:border-white/10 light:border-slate-300 text-white dark:text-white light:text-slate-900 text-sm focus:outline-none focus:border-teal-400 resize-none"
                   />
-                  <p className="text-xs text-slate-400 mt-1">
-                    {language === 'es' ? 'Este texto se mostrará en tamaño gigante al tocar la tarjeta.' : 'This text will be shown in large font when the card is tapped.'}
-                  </p>
                 </div>
 
-                {/* Buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-semibold text-sm transition-colors cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-white/5 dark:bg-white/5 light:bg-slate-100 hover:bg-white/10 text-slate-300 dark:text-slate-300 light:text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                   >
-                    {t.cancel || 'Cancelar'}
+                    {isEs ? 'Cancelar' : 'Cancel'}
                   </button>
                   <button
                     type="submit"
-                    className="py-3.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-teal-500/20 cursor-pointer"
                   >
-                    <Check size={16} className="stroke-[2.5]" />
-                    <span>{editingCard ? (t.update || 'Guardar') : (t.save || 'Crear')}</span>
+                    {isEs ? 'Guardar' : 'Save'}
                   </button>
                 </div>
               </form>
             </motion.div>
           </motion.div>
         )}
-        {/* Delete Card Confirmation Modal */}
+
+        {/* Delete Confirmation Modal */}
         {deleteCandidateId && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
-            onClick={() => setDeleteCandidateId(null)}
+            className="fixed inset-0 z-[130] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-[#161828] border border-rose-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+              className="bg-slate-900 dark:bg-slate-900 light:bg-white border border-rose-500/30 rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center space-y-4"
             >
-              <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
+              <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400">
                 <Trash2 size={24} />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">
-                  {language === 'es' ? '¿Eliminar tarjeta AAC?' : 'Delete AAC card?'}
+                <h3 className="text-base font-bold text-white dark:text-white light:text-slate-900">
+                  {isEs ? '¿Eliminar esta tarjeta?' : 'Delete this card?'}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
-                  {t.deleteConfirm || (language === 'es' ? '¿Deseas eliminar esta tarjeta de comunicación?' : 'Do you want to delete this communication card?')}
+                <p className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600 mt-1">
+                  {isEs ? 'Esta acción no se puede deshacer.' : 'This action cannot be undone.'}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setDeleteCandidateId(null)}
-                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                  className="py-3 px-4 rounded-xl bg-white/5 dark:bg-white/5 light:bg-slate-100 hover:bg-white/10 text-slate-300 dark:text-slate-300 light:text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
-                  {t.cancel || 'Cancelar'}
+                  {isEs ? 'Cancelar' : 'Cancel'}
                 </button>
                 <button
                   type="button"
                   onClick={confirmDeleteCard}
-                  className="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-rose-500/20 cursor-pointer"
+                  className="py-3 px-4 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-rose-500/20 cursor-pointer"
                 >
-                  {language === 'es' ? 'Eliminar' : 'Delete'}
+                  {isEs ? 'Eliminar' : 'Delete'}
                 </button>
               </div>
             </motion.div>
@@ -479,43 +602,41 @@ export default function Cards({ language, cards, onUpdateCards, onBack, onShowFu
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[120] bg-black/80 backdrop-blur-md flex items-center justify-center p-6"
-            onClick={() => setIsRestoreConfirmOpen(false)}
+            className="fixed inset-0 z-[130] bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm bg-[#161828] border border-cyan-500/30 rounded-3xl p-6 shadow-2xl text-center space-y-4"
+              className="bg-slate-900 dark:bg-slate-900 light:bg-white border border-teal-500/30 rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center space-y-4"
             >
-              <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mx-auto text-cyan-400">
+              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center mx-auto text-teal-400">
                 <RotateCcw size={24} />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">
-                  {language === 'es' ? '¿Restaurar tarjetas predeterminadas?' : 'Restore default cards?'}
+                <h3 className="text-base font-bold text-white dark:text-white light:text-slate-900">
+                  {isEs ? '¿Restaurar tarjetas originales?' : 'Restore default cards?'}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
-                  {language === 'es'
-                    ? 'Se restablecerán las tarjetas básicas originales del sistema en tu idioma.'
-                    : 'The original default communication cards will be restored.'}
+                <p className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600 mt-1">
+                  {isEs 
+                    ? 'Se restablecerán las 12 tarjetas de comunicación estándar.' 
+                    : 'The 12 standard communication cards will be restored.'}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsRestoreConfirmOpen(false)}
-                  className="py-3 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                  className="py-3 px-4 rounded-xl bg-white/5 dark:bg-white/5 light:bg-slate-100 hover:bg-white/10 text-slate-300 dark:text-slate-300 light:text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
                 >
-                  {t.cancel || 'Cancelar'}
+                  {isEs ? 'Cancelar' : 'Cancel'}
                 </button>
                 <button
                   type="button"
                   onClick={confirmRestoreDefaults}
-                  className="py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-cyan-500/20 cursor-pointer"
+                  className="py-3 px-4 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shadow-lg shadow-teal-500/20 cursor-pointer"
                 >
-                  {language === 'es' ? 'Restaurar' : 'Restore'}
+                  {isEs ? 'Restaurar' : 'Restore'}
                 </button>
               </div>
             </motion.div>

@@ -15,7 +15,9 @@ import {
   ChevronDown, 
   ChevronUp,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  UtensilsCrossed,
+  Pill
 } from 'lucide-react';
 import { i18n } from '../../i18n';
 
@@ -165,7 +167,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
       
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar pb-[max(5rem,calc(env(safe-area-inset-bottom,0px)+3.5rem))]">
       {/* Identity Master Card */}
-      <div className="mx-6 mt-6 p-8 rounded-[40px] bg-white/5 backdrop-blur-2xl border border-white/20 text-center mb-6 shadow-2xl relative group overflow-hidden">
+      <div className="mx-6 mt-6 p-8 rounded-[40px] bg-white/5 dark:bg-white/5 light:bg-white backdrop-blur-2xl border border-white/20 dark:border-white/20 light:border-slate-200 text-center mb-6 shadow-2xl relative group overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 via-indigo-500/5 to-transparent opacity-60" />
         <div className="relative z-10">
           <div className="flex justify-center mb-6">
@@ -178,23 +180,23 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
                 referrerPolicy="no-referrer" 
               />
             ) : (
-              <div className="w-24 h-24 rounded-[32px] bg-white/10 flex items-center justify-center border-2 border-white/20 shadow-2xl">
-                <User size={48} className="text-white/70" />
+              <div className="w-24 h-24 rounded-[32px] bg-white/10 dark:bg-white/10 light:bg-slate-100 flex items-center justify-center border-2 border-white/20 dark:border-white/20 light:border-slate-300 shadow-2xl">
+                <User size={48} className="text-white/70 dark:text-white/70 light:text-slate-600" />
               </div>
             )}
           </div>
-          <div className="text-[10px] text-cyan-400 font-black uppercase tracking-[3px] mb-1 flex items-center justify-center gap-1.5">
+          <div className="text-[10px] text-cyan-400 dark:text-cyan-400 light:text-cyan-700 font-black uppercase tracking-[3px] mb-1 flex items-center justify-center gap-1.5">
             <Sparkles size={12} />
             <span>{language === 'es' ? 'YO SOY' : 'I AM'}</span>
           </div>
-          <div className="text-3xl font-black tracking-tighter text-white drop-shadow-lg uppercase">
+          <div className="text-3xl font-black tracking-tighter text-white dark:text-white light:text-slate-900 drop-shadow-lg uppercase">
             {profile.name || (language === 'es' ? 'Usuario' : 'User')}
           </div>
-          <div className="text-[10px] text-cyan-400 mt-2 font-black uppercase tracking-[3px] opacity-80">
+          <div className="text-[10px] text-cyan-400 dark:text-cyan-400 light:text-cyan-800 mt-2 font-black uppercase tracking-[3px] opacity-90">
             {now.toLocaleDateString(getLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}
           </div>
           {profile.address && (
-            <div className="text-xs text-slate-400 mt-5 px-4 font-bold tracking-tight opacity-70 italic">
+            <div className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600 mt-5 px-4 font-bold tracking-tight italic">
               {profile.address}
             </div>
           )}
@@ -202,13 +204,13 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
       </div>
 
       {/* Dynamic Reality Anchor Context Box */}
-      <div className="mx-6 bg-black/40 backdrop-blur-3xl rounded-[32px] p-6 sm:p-8 mb-6 border border-white/10 shadow-inner space-y-4">
+      <div className="mx-6 bg-slate-900/40 dark:bg-slate-900/40 light:bg-white backdrop-blur-3xl rounded-[32px] p-6 sm:p-8 mb-6 border border-white/10 dark:border-white/10 light:border-slate-200 shadow-xl space-y-4 text-left">
         {/* Dynamic Location Line */}
-        <div className="border-b border-white/10 pb-4">
+        <div className="border-b border-white/10 dark:border-white/10 light:border-slate-200 pb-4">
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-2">
-              <MapPin size={13} className="text-cyan-400" />
-              <span className="text-[10px] font-black text-cyan-400 tracking-[3px] uppercase">
+              <MapPin size={13} className="text-cyan-400 dark:text-cyan-400 light:text-cyan-700" />
+              <span className="text-[10px] font-black text-cyan-400 dark:text-cyan-400 light:text-cyan-800 tracking-[3px] uppercase">
                 {t.location}
               </span>
             </div>
@@ -216,20 +218,20 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
             <button
               onClick={fetchGPSLocation}
               disabled={locationStatus === 'locating'}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-wider active:scale-95 transition-all cursor-pointer border border-cyan-500/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/15 dark:bg-cyan-500/15 light:bg-cyan-100 hover:bg-cyan-500/25 dark:hover:bg-cyan-500/25 light:hover:bg-cyan-200 text-cyan-300 dark:text-cyan-300 light:text-cyan-900 text-[10px] font-black uppercase tracking-wider active:scale-95 transition-all cursor-pointer border border-cyan-400/30 dark:border-cyan-400/30 light:border-cyan-300 shadow-sm"
               title={t.refreshLocation || "Actualizar GPS"}
             >
               <RotateCw size={11} className={locationStatus === 'locating' ? 'animate-spin' : ''} />
-              <span>{locationStatus === 'locating' ? (language === 'es' ? 'Buscando...' : 'Locating...') : (t.refreshLocation || 'GPS')}</span>
+              <span>{locationStatus === 'locating' ? (language === 'es' ? 'Buscando...' : 'Locating...') : (t.refreshLocation || 'Actualizar GPS')}</span>
             </button>
           </div>
 
-          <div className="text-white font-bold tracking-tight text-sm sm:text-base leading-snug">
+          <div className="text-white dark:text-white light:text-slate-900 font-bold tracking-tight text-sm sm:text-base leading-snug">
             {locationText}
           </div>
 
           {coords && accuracy && (
-            <div className="text-[10px] text-cyan-300/80 font-mono mt-1 flex items-center gap-2">
+            <div className="text-[10px] text-cyan-300/90 dark:text-cyan-300/90 light:text-cyan-800 font-mono mt-1.5 flex items-center gap-2 font-bold">
               <span>{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}</span>
               <span>•</span>
               <span>{t.accuracy || 'Precisión:'} ±{accuracy}m</span>
@@ -237,7 +239,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
           )}
 
           {locationStatus === 'error' && !profile.address && (
-            <div className="text-[11px] text-amber-300/80 mt-1 flex items-center gap-1">
+            <div className="text-[11px] text-amber-500 dark:text-amber-300 mt-1.5 flex items-center gap-1 font-semibold">
               <AlertCircle size={12} />
               <span>{t.gpsError || 'GPS no disponible'}</span>
             </div>
@@ -249,23 +251,20 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
           label={t.cronos} 
           value={`${now.toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })} — ${now.toLocaleDateString(getLocale(), { weekday: 'long' })}`} 
         />
-
-        {/* Neurological Status */}
-        <ContextLine label={t.status} value={t.statusVal} />
       </div>
 
       {/* Interactive Live Map Section */}
-      <div className="mx-6 mb-6 rounded-[32px] bg-slate-900/60 backdrop-blur-2xl border border-white/15 overflow-hidden shadow-2xl">
-        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-white/10 bg-white/5">
+      <div className="mx-6 mb-6 rounded-[32px] bg-slate-900/60 dark:bg-slate-900/60 light:bg-white backdrop-blur-2xl border border-white/15 dark:border-white/15 light:border-slate-200 overflow-hidden shadow-2xl">
+        <div className="p-4 sm:p-5 flex items-center justify-between border-b border-white/10 dark:border-white/10 light:border-slate-200 bg-white/5 dark:bg-white/5 light:bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-300 dark:text-cyan-300 light:text-cyan-700">
               <Navigation size={16} />
             </div>
             <div>
-              <h4 className="text-xs font-black tracking-wider text-white uppercase">
-                {t.interactiveMap || (language === 'es' ? 'MAPA DE ENTORNO' : 'ENVIRONMENT MAP')}
+              <h4 className="text-xs font-black tracking-wider text-white dark:text-white light:text-slate-900 uppercase">
+                {language === 'es' ? 'MAPA DE ENTORNO SEGURO' : 'SAFE ENVIRONMENT MAP'}
               </h4>
-              <p className="text-[10px] text-slate-400 font-medium">
+              <p className="text-[10px] text-slate-400 dark:text-slate-400 light:text-slate-600 font-medium">
                 {coords ? (t.gpsDetected || 'GPS en vivo') : (profile.address || t.locationVal)}
               </p>
             </div>
@@ -273,7 +272,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
 
           <button
             onClick={() => setShowMapEmbed(!showMapEmbed)}
-            className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+            className="px-3 py-1.5 rounded-xl bg-white/10 dark:bg-white/10 light:bg-slate-200 hover:bg-white/15 dark:hover:bg-white/15 light:hover:bg-slate-300 text-slate-200 dark:text-slate-200 light:text-slate-800 text-xs font-bold flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
           >
             <span>{showMapEmbed ? (language === 'es' ? 'Ocultar' : 'Hide') : (language === 'es' ? 'Mostrar' : 'Show')}</span>
             {showMapEmbed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -305,12 +304,12 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
         </AnimatePresence>
 
         {/* External Map Action Links */}
-        <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-3 gap-2 bg-black/30">
+        <div className="p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-3 gap-2 bg-black/20 dark:bg-black/30 light:bg-slate-50 border-t border-white/5 dark:border-white/5 light:border-slate-200">
           <a
             href={googleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-3 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-2 text-white font-bold text-xs border border-white/10 text-center"
+            className="p-3 rounded-2xl bg-white/10 dark:bg-white/10 light:bg-white hover:bg-white/15 dark:hover:bg-white/15 light:hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2 text-white dark:text-white light:text-slate-900 font-bold text-xs border border-white/10 dark:border-white/10 light:border-slate-200 text-center shadow-sm"
           >
             <Map size={14} className="text-cyan-400 shrink-0" />
             <span className="whitespace-nowrap">Google Maps</span>
@@ -321,7 +320,7 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
             href={appleMapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-3 rounded-2xl bg-white/10 hover:bg-white/15 active:scale-95 transition-all flex items-center justify-center gap-2 text-white font-bold text-xs border border-white/10 text-center"
+            className="p-3 rounded-2xl bg-white/10 dark:bg-white/10 light:bg-white hover:bg-white/15 dark:hover:bg-white/15 light:hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center gap-2 text-white dark:text-white light:text-slate-900 font-bold text-xs border border-white/10 dark:border-white/10 light:border-slate-200 text-center shadow-sm"
           >
             <Navigation size={14} className="text-blue-400 shrink-0" />
             <span className="whitespace-nowrap">Apple Maps</span>
@@ -330,12 +329,12 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
 
           <button
             onClick={handleShareLocation}
-            className="p-3 rounded-2xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-95 transition-all flex items-center justify-center gap-2 text-cyan-200 font-bold text-xs border border-cyan-500/30 cursor-pointer"
+            className="p-3 rounded-2xl bg-cyan-600/20 dark:bg-cyan-600/20 light:bg-cyan-100 hover:bg-cyan-600/30 dark:hover:bg-cyan-600/30 light:hover:bg-cyan-200 active:scale-95 transition-all flex items-center justify-center gap-2 text-cyan-200 dark:text-cyan-200 light:text-cyan-900 font-bold text-xs border border-cyan-500/30 dark:border-cyan-500/30 light:border-cyan-300 cursor-pointer shadow-sm"
           >
             {copied ? (
               <>
                 <Check size={14} className="text-emerald-400 shrink-0" />
-                <span className="text-emerald-300 font-bold whitespace-nowrap">{language === 'es' ? '¡Copiado!' : 'Copied!'}</span>
+                <span className="text-emerald-300 dark:text-emerald-300 light:text-emerald-800 font-bold whitespace-nowrap">{language === 'es' ? '¡Copiado!' : 'Copied!'}</span>
               </>
             ) : (
               <>
@@ -349,35 +348,41 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
 
       {/* Needs & Anchoring Presets */}
       <div className="px-6 mb-8 grid grid-cols-2 gap-4">
-        <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-3xl p-5 text-center shadow-lg">
-          <div className="text-xl mb-1">🍔</div>
-          <div className="text-[9px] text-emerald-400 font-black tracking-widest mb-1 uppercase">{t.food}</div>
-          <div className="text-sm text-white font-bold">{profile.safeFood || (language === 'es' ? 'Comida segura' : 'Safe food')}</div>
+        <div className="bg-emerald-950/20 dark:bg-emerald-950/20 light:bg-emerald-50/80 border border-emerald-500/20 dark:border-emerald-500/20 light:border-emerald-200 rounded-3xl p-5 text-center shadow-lg">
+          <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center mx-auto mb-2 text-emerald-400">
+            <UtensilsCrossed size={20} />
+          </div>
+          <div className="text-[10px] text-emerald-400 dark:text-emerald-400 light:text-emerald-800 font-bold tracking-wider mb-1 uppercase">{t.food}</div>
+          <div className="text-sm text-white dark:text-white light:text-slate-900 font-bold">{profile.safeFood || (language === 'es' ? 'Comida segura' : 'Safe food')}</div>
         </div>
-        <div className="bg-indigo-950/20 border border-indigo-500/20 rounded-3xl p-5 text-center shadow-lg">
-          <div className="text-xl mb-1">💊</div>
-          <div className="text-[9px] text-indigo-400 font-black tracking-widest mb-1 uppercase">{t.daily}</div>
-          <div className="text-sm text-white font-bold">{profile.dailyMed || (language === 'es' ? 'Medicación al día' : 'Daily medication')}</div>
+        <div className="bg-indigo-950/20 dark:bg-indigo-950/20 light:bg-indigo-50/80 border border-indigo-500/20 dark:border-indigo-500/20 light:border-indigo-200 rounded-3xl p-5 text-center shadow-lg">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center mx-auto mb-2 text-indigo-400">
+            <Pill size={20} />
+          </div>
+          <div className="text-[10px] text-indigo-400 dark:text-indigo-400 light:text-indigo-800 font-bold tracking-wider mb-1 uppercase">{t.daily}</div>
+          <div className="text-sm text-white dark:text-white light:text-slate-900 font-bold">{profile.dailyMed || (language === 'es' ? 'Medicación al día' : 'Daily medication')}</div>
         </div>
       </div>
 
       {/* Safety Contact & Direct Action */}
       <div className="px-6 mb-8 space-y-4">
-        <div className="text-[10px] text-slate-500 font-black tracking-[4px] uppercase ml-4">{t.security}</div>
+        <div className="text-[10px] text-slate-500 dark:text-slate-400 light:text-slate-600 font-bold tracking-wider uppercase ml-4">{t.security}</div>
         
         {profile.contacts?.[0] && (
-          <div className="glass-card p-5 rounded-[32px] flex items-center justify-between shadow-xl">
+          <div className="glass-card p-5 rounded-[32px] flex items-center justify-between shadow-xl border border-white/10 dark:border-white/10 light:border-slate-200">
             <div className="flex items-center gap-4">
               {profile.contactImage ? (
                 <img src={profile.contactImage} alt="Contact" className="w-12 h-12 rounded-2xl object-cover border border-white/20 cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setEnlargedImage(profile.contactImage!)} referrerPolicy="no-referrer" />
               ) : (
-                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-xl">👤</div>
+                <div className="w-12 h-12 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-100 flex items-center justify-center text-emerald-400 border border-white/10">
+                  <User size={22} />
+                </div>
               )}
               <div>
-                <div className="text-[9px] text-emerald-400 font-black tracking-widest uppercase">{t.safePerson}</div>
-                <div className="text-white font-bold">{profile.contacts[0].name}</div>
+                <div className="text-[10px] text-emerald-400 dark:text-emerald-400 light:text-emerald-800 font-bold tracking-wider uppercase">{t.safePerson}</div>
+                <div className="text-white dark:text-white light:text-slate-900 font-bold">{profile.contacts[0].name}</div>
                 {profile.contacts[0].phone && (
-                  <div className="text-xs text-slate-400">{profile.contacts[0].phone}</div>
+                  <div className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600">{profile.contacts[0].phone}</div>
                 )}
               </div>
             </div>
@@ -389,16 +394,6 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
             </button>
           </div>
         )}
-
-        {/* Big Refresh / Map Action Button */}
-        <motion.button 
-          whileTap={{ scale: 0.98 }}
-          onClick={fetchGPSLocation}
-          className="w-full glass-card p-6 rounded-[32px] flex items-center justify-center gap-3 text-cyan-300 font-black tracking-widest text-xs active:bg-white/10 transition-colors cursor-pointer border border-cyan-500/30 shadow-xl"
-        >
-          <RotateCw size={16} className={locationStatus === 'locating' ? 'animate-spin' : ''} />
-          <span>{t.map}</span>
-        </motion.button>
       </div>
       </div>
 
@@ -428,9 +423,9 @@ export default function Anchor({ profile, language, onBack }: AnchorProps) {
 
 function ContextLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-b border-white/5 pb-4 last:border-0 last:pb-0">
-      <div className="text-[9px] font-black text-cyan-600 mb-1 tracking-[3px] uppercase">{label}</div>
-      <div className="text-white font-bold tracking-tight text-sm sm:text-base leading-snug">{value}</div>
+    <div className="border-b border-white/5 dark:border-white/5 light:border-slate-200 pb-4 last:border-0 last:pb-0">
+      <div className="text-[9px] font-black text-cyan-600 dark:text-cyan-400 light:text-cyan-800 mb-1 tracking-[3px] uppercase">{label}</div>
+      <div className="text-white dark:text-white light:text-slate-900 font-bold tracking-tight text-sm sm:text-base leading-snug">{value}</div>
     </div>
   );
 }
