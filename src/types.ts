@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type Screen = 'home' | 'anchor' | 'body' | 'cave' | 'haptic' | 'cards' | 'meds' | 'crisis' | 'settings' | 'splash' | 'sos' | 'ai' | 'debts' | 'stealth' | 'companion' | 'isochronic' | 'kit' | 'books' | 'sensory-log' | 'premium';
+export type Screen = 'home' | 'anchor' | 'body' | 'cave' | 'haptic' | 'cards' | 'meds' | 'crisis' | 'settings' | 'splash' | 'sos' | 'ai' | 'debts' | 'stealth' | 'companion' | 'isochronic' | 'kit' | 'books' | 'sensory-log' | 'premium' | 'arcade';
 
 export type EnergyLevel = 1 | 2 | 3 | 4 | 5;
 

@@ -381,9 +381,9 @@ export default function Crisis({
                       setIsIdeationModalOpen(false);
                       onActivateCave();
                     }}
-                    className="py-3 px-3 rounded-2xl bg-indigo-950/60 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-200 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors"
+                    className="py-3 px-3 rounded-2xl bg-indigo-950/60 dark:bg-indigo-950/60 light:bg-indigo-100 hover:bg-indigo-900/60 border border-indigo-500/30 text-indigo-200 dark:text-indigo-200 light:text-indigo-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
                   >
-                    <Moon size={14} className="text-indigo-400" />
+                    <Moon size={14} className="text-indigo-400 dark:text-indigo-400 light:text-indigo-700" />
                     <span>{t.ideationModal?.openCave || 'Modo Cueva'}</span>
                   </button>
 
@@ -392,9 +392,9 @@ export default function Crisis({
                       setIsIdeationModalOpen(false);
                       onNavigateHaptic();
                     }}
-                    className="py-3 px-3 rounded-2xl bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors"
+                    className="py-3 px-3 rounded-2xl bg-cyan-950/60 dark:bg-cyan-950/60 light:bg-cyan-100 hover:bg-cyan-900/60 border border-cyan-500/30 text-cyan-200 dark:text-cyan-200 light:text-cyan-950 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
                   >
-                    <Activity size={14} className="text-cyan-400" />
+                    <Activity size={14} className="text-cyan-400 dark:text-cyan-400 light:text-cyan-700" />
                     <span>{t.ideationModal?.openHaptic || 'Vibración'}</span>
                   </button>
                 </div>
@@ -402,7 +402,7 @@ export default function Crisis({
                 {/* Close Button */}
                 <button
                   onClick={() => setIsIdeationModalOpen(false)}
-                  className="w-full mt-2 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase tracking-wider transition-colors border border-white/5"
+                  className="w-full mt-2 py-3 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-200 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-300 text-slate-300 dark:text-slate-300 light:text-slate-800 font-bold text-xs uppercase tracking-wider transition-colors border border-white/5 dark:border-white/5 light:border-slate-300 cursor-pointer"
                 >
                   {t.ideationModal?.close || 'Entendido / Me mantengo a salvo'}
                 </button>

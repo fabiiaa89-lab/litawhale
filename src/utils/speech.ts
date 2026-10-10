@@ -84,22 +84,39 @@ export function speakLatinAmericanText(
     utterance.rate = 0.92;
     utterance.pitch = 1.0;
 
-    if (language === 'es') {
-      utterance.lang = 'es-419'; // Standard BCP-47 for Latin America
-      const latamVoice = getLatinAmericanVoice();
-      if (latamVoice) {
-        utterance.voice = latamVoice;
-        utterance.lang = latamVoice.lang || 'es-419';
+    const executeSpeak = () => {
+      if (language === 'es') {
+        utterance.lang = 'es-419'; // Standard BCP-47 for Latin America
+        const latamVoice = getLatinAmericanVoice();
+        if (latamVoice) {
+          utterance.voice = latamVoice;
+          utterance.lang = latamVoice.lang || 'es-419';
+        }
+      } else {
+        utterance.lang = 'en-US';
       }
+
+      if (callbacks?.onStart) utterance.onstart = callbacks.onStart;
+      if (callbacks?.onEnd) utterance.onend = callbacks.onEnd;
+      if (callbacks?.onError) utterance.onerror = callbacks.onError;
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        executeSpeak();
+      };
+      // Timeout fallback in case voiceschanged does not trigger
+      setTimeout(() => {
+        if (!window.speechSynthesis.speaking) {
+          executeSpeak();
+        }
+      }, 150);
     } else {
-      utterance.lang = 'en-US';
+      executeSpeak();
     }
-
-    if (callbacks?.onStart) utterance.onstart = callbacks.onStart;
-    if (callbacks?.onEnd) utterance.onend = callbacks.onEnd;
-    if (callbacks?.onError) utterance.onerror = callbacks.onError;
-
-    window.speechSynthesis.speak(utterance);
   } catch (err) {
     console.warn('Speech synthesis error:', err);
     callbacks?.onError?.();

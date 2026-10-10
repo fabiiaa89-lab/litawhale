@@ -33,17 +33,17 @@ export default function Companion({ profile, language, onBack }: CompanionProps)
   }, [profile.supportEntity]);
 
   return (
-    <div className="flex flex-col h-full bg-slate-950 overflow-hidden">
+    <div className="flex flex-col h-full bg-transparent overflow-hidden">
       <Header title={t.title} onBack={onBack} />
       
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar safe-area-bottom flex flex-col items-center p-8 text-center">
         {!profile.supportEntity ? (
-          <div className="glass-card p-6 rounded-3xl border border-rose-500/20 bg-rose-500/5">
+          <div className="glass-card p-6 rounded-3xl border border-rose-500/20 bg-rose-500/5 dark:bg-rose-500/5 light:bg-rose-50">
             <HeartPulse className="w-12 h-12 text-rose-400 mx-auto mb-4 opacity-50" />
-            <p className="text-white font-bold leading-relaxed">
+            <p className="text-white dark:text-white light:text-slate-900 font-bold leading-relaxed">
               {t.noEntity}
             </p>
-            <p className="text-slate-400 text-sm mt-2">
+            <p className="text-slate-400 dark:text-slate-400 light:text-slate-600 text-sm mt-2">
               {t.goConfig}
             </p>
           </div>
@@ -60,7 +60,7 @@ export default function Companion({ profile, language, onBack }: CompanionProps)
               )}
             </motion.div>
 
-            <h3 className="text-2xl font-black text-white uppercase tracking-widest mb-8">
+            <h3 className="text-2xl font-black text-white dark:text-white light:text-slate-900 uppercase tracking-widest mb-8">
               {profile.supportEntity}
             </h3>
 
@@ -74,10 +74,10 @@ export default function Companion({ profile, language, onBack }: CompanionProps)
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white/5 border border-white/10 rounded-3xl p-6 relative overflow-hidden"
+                  className="bg-white/5 dark:bg-white/5 light:bg-white border border-white/10 dark:border-white/10 light:border-slate-200 rounded-3xl p-6 relative overflow-hidden shadow-lg"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent" />
-                  <p className="relative z-10 text-lg leading-relaxed text-slate-200 font-medium italic">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none" />
+                  <p className="relative z-10 text-lg leading-relaxed text-slate-200 dark:text-slate-200 light:text-slate-800 font-medium italic">
                     "{message}"
                   </p>
                 </motion.div>
@@ -88,7 +88,7 @@ export default function Companion({ profile, language, onBack }: CompanionProps)
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={fetchCompanion}
-                className="mt-12 px-8 py-4 rounded-full bg-indigo-500/10 border border-indigo-400/30 text-indigo-300 text-xs font-black uppercase tracking-widest hover:bg-indigo-500/20 transition-colors"
+                className="mt-12 px-8 py-4 rounded-full bg-indigo-500/10 dark:bg-indigo-500/10 light:bg-indigo-100 border border-indigo-400/30 dark:border-indigo-400/30 light:border-indigo-300 text-indigo-300 dark:text-indigo-300 light:text-indigo-900 text-xs font-black uppercase tracking-widest hover:bg-indigo-500/20 transition-colors shadow-sm cursor-pointer"
               >
                 {t.newInteraction}
               </motion.button>

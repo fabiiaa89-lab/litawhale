@@ -13,6 +13,7 @@ import {
   Hourglass, 
   ShieldCheck, 
   Bot,
+  Gamepad2,
   ArrowRight
 } from 'lucide-react';
 import WhaleLogo from '../WhaleLogo';
@@ -308,6 +309,28 @@ export default function Home({
             </span>
           </div>
           <div className="w-8 h-8 rounded-xl bg-slate-700/30 border border-slate-600/30 flex items-center justify-center text-slate-400 group-hover:translate-x-0.5 transition-transform shrink-0">
+            <ArrowRight size={15} />
+          </div>
+        </motion.button>
+
+        {/* Entretenimiento Calmante & Minijuegos */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate('arcade')}
+          className="w-full bg-gradient-to-r from-cyan-950/40 via-blue-900/30 to-purple-950/40 dark:from-cyan-950/40 dark:via-blue-900/30 dark:to-purple-950/40 light:bg-gradient-to-r light:from-cyan-50 light:via-blue-50 light:to-purple-50 border border-cyan-400/30 dark:border-cyan-400/30 light:border-cyan-300 rounded-2xl sm:rounded-3xl p-4 sm:p-4.5 flex items-center gap-3.5 cursor-pointer shadow-lg hover:border-cyan-400/60 transition-all text-left shrink-0 group relative overflow-hidden"
+        >
+          <div className="w-11 h-11 rounded-2xl bg-cyan-500/20 dark:bg-cyan-500/20 light:bg-cyan-100 border border-cyan-400/35 dark:border-cyan-400/35 light:border-cyan-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Gamepad2 size={22} className="text-cyan-300 dark:text-cyan-300 light:text-cyan-700 shrink-0" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-sm sm:text-base font-bold text-white dark:text-white light:text-slate-900 block tracking-tight leading-snug">
+              {isEs ? 'Entretenimiento Calmante' : 'Calming Entertainment'}
+            </span>
+            <span className="text-[11px] text-cyan-200/90 dark:text-cyan-200/90 light:text-slate-600 font-medium block mt-0.5 leading-snug">
+              {isEs ? 'Fidget Spinner · Sudoku Zen · Burbujas de Palabras' : 'Fidget Spinner · Zen Sudoku · Word Bubbles'}
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-400/25 flex items-center justify-center text-cyan-300 dark:text-cyan-300 light:text-cyan-700 shrink-0 group-hover:translate-x-0.5 transition-transform">
             <ArrowRight size={15} />
           </div>
         </motion.button>

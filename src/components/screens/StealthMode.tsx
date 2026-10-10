@@ -1,8 +1,9 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from '../Header';
 import { Language, Screen } from '../../types';
 import { i18n } from '../../i18n';
+import { hapticEngine } from '../../utils/hapticEngine';
 import { 
   Zap, 
   Hand, 
@@ -45,74 +46,82 @@ export default function StealthMode({ language, onBack, onNavigate }: StealthMod
   const [breathCounter, setBreathCounter] = useState(4);
   const [isBreathingActive, setIsBreathingActive] = useState(true);
 
-  // Isometric hold interaction
-  const [isPressingHands, setIsPressingHands] = useState(false);
-  const [pressProgress, setPressProgress] = useState(0);
+  // Isometric guided interaction (hands-free: 3s prep so user can interlace fingers + 10s steady pressure)
+  const [isometricState, setIsometricState] = useState<'idle' | 'prep' | 'active' | 'done'>('idle');
+  const [prepSeconds, setPrepSeconds] = useState(3);
+  const [holdSeconds, setHoldSeconds] = useState(10);
+  const isometricTimerRef = useRef<any>(null);
 
-  // Breathing loop
+  const startIsometricSession = () => {
+    setIsometricState('prep');
+    setPrepSeconds(3);
+    setHoldSeconds(10);
+
+    // Initial alert pulse
+    hapticEngine.playTactilePulse(70);
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(60); } catch (e) {}
+    }
+  };
+
+  const cancelIsometricSession = () => {
+    setIsometricState('idle');
+    setPrepSeconds(3);
+    setHoldSeconds(10);
+    if (isometricTimerRef.current) clearInterval(isometricTimerRef.current);
+  };
+
   useEffect(() => {
-    if (!isBreathingActive) return;
-
-    let duration = 4;
-    if (breathPhase === 'inhale') duration = 4;
-    else if (breathPhase === 'hold') duration = 4;
-    else if (breathPhase === 'exhale') duration = 6;
-
-    setBreathCounter(duration);
-
-    const interval = setInterval(() => {
-      setBreathCounter((prev) => {
-        if (prev <= 1) {
-          if (breathPhase === 'inhale') {
-            setBreathPhase('hold');
-            return 4;
-          } else if (breathPhase === 'hold') {
-            setBreathPhase('exhale');
-            return 6;
-          } else {
-            setBreathPhase('inhale');
-            return 4;
-          }
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [breathPhase, isBreathingActive]);
-
-  // Isometric pressure press loop
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isPressingHands) {
-      // Haptic feedback if supported
-      if ('vibrate' in navigator) {
-        try {
-          navigator.vibrate(40);
-        } catch (e) {
-          // ignore
-        }
-      }
-      timer = setInterval(() => {
-        setPressProgress((p) => {
-          if (p >= 100) {
+    if (isometricState === 'prep') {
+      const interval = setInterval(() => {
+        setPrepSeconds((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setIsometricState('active');
+            // Dual pulse marking start of steady hold
+            hapticEngine.playTactilePulse(120);
             if ('vibrate' in navigator) {
-              try {
-                navigator.vibrate([80, 50, 120]);
-              } catch (e) {
-                // ignore
-              }
+              try { navigator.vibrate([100, 50, 100]); } catch (e) {}
             }
-            return 100;
+            return 0;
           }
-          return p + 10;
+          hapticEngine.playTactilePulse(40);
+          if ('vibrate' in navigator) {
+            try { navigator.vibrate(40); } catch (e) {}
+          }
+          return prev - 1;
         });
       }, 1000);
-    } else {
-      setPressProgress(0);
+      return () => clearInterval(interval);
     }
-    return () => clearInterval(timer);
-  }, [isPressingHands]);
+
+    if (isometricState === 'active') {
+      const interval = setInterval(() => {
+        setHoldSeconds((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setIsometricState('done');
+            // Calming release crescendo
+            hapticEngine.playTactilePulse(180);
+            if ('vibrate' in navigator) {
+              try { navigator.vibrate([80, 50, 120, 50, 200]); } catch (e) {}
+            }
+            setTimeout(() => {
+              setIsometricState('idle');
+            }, 3500);
+            return 0;
+          }
+          // Steady rhythmic heartbeat during the 10-second hold
+          hapticEngine.playTactilePulse(50);
+          if ('vibrate' in navigator) {
+            try { navigator.vibrate(45); } catch (e) {}
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isometricState]);
 
   const copyToClipboard = async (text: string, index: number) => {
     try {
@@ -341,30 +350,72 @@ export default function StealthMode({ language, onBack, onNavigate }: StealthMod
 
               {/* Interactive Press Pad */}
               <div className="pt-2">
-                <button
-                  onMouseDown={() => setIsPressingHands(true)}
-                  onMouseUp={() => setIsPressingHands(false)}
-                  onTouchStart={() => setIsPressingHands(true)}
-                  onTouchEnd={() => setIsPressingHands(false)}
-                  className={`w-full py-4 px-6 rounded-2xl border font-black text-xs uppercase tracking-wider flex items-center justify-between transition-all select-none cursor-pointer ${
-                    isPressingHands 
-                      ? 'bg-cyan-500 text-slate-950 border-cyan-400 scale-[0.98] shadow-inner' 
-                      : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border-cyan-500/30 shadow-lg'
-                  }`}
-                >
-                  <span className="leading-tight">
-                    {isPressingHands ? t.pressHandsHolding : t.pressHandsAction}
-                  </span>
-                  <span className="font-mono text-sm">
-                    {isPressingHands ? `${pressProgress}%` : '10s'}
-                  </span>
-                </button>
-                {isPressingHands && (
-                  <div className="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
-                    <div 
-                      className="bg-cyan-400 h-full transition-all duration-300"
-                      style={{ width: `${pressProgress}%` }}
-                    />
+                {isometricState === 'idle' && (
+                  <button
+                    onClick={startIsometricSession}
+                    className="w-full py-4 px-6 rounded-2xl border font-black text-xs uppercase tracking-wider flex items-center justify-between transition-all select-none cursor-pointer bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border-cyan-500/30 shadow-lg active:scale-98"
+                  >
+                    <span className="leading-tight">{t.pressHandsAction}</span>
+                    <span className="font-mono text-sm px-2.5 py-0.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30">
+                      10s
+                    </span>
+                  </button>
+                )}
+
+                {isometricState === 'prep' && (
+                  <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-center space-y-2">
+                    <div className="flex items-center justify-center gap-2 text-amber-300 text-xs font-black uppercase tracking-wider">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+                      <span>{t.pressHandsPrep || (language === 'es' ? 'Prepárate y entrelaza tus dedos...' : 'Prepare and interlace your fingers...')}</span>
+                    </div>
+                    <div className="text-3xl font-black text-amber-200 font-mono">
+                      {prepSeconds}s
+                    </div>
+                    <button
+                      onClick={cancelIsometricSession}
+                      className="text-[10px] text-slate-400 hover:text-white uppercase font-bold tracking-wider underline cursor-pointer"
+                    >
+                      {language === 'es' ? 'Cancelar' : 'Cancel'}
+                    </button>
+                  </div>
+                )}
+
+                {isometricState === 'active' && (
+                  <div className="p-4 rounded-2xl bg-cyan-500/25 border-2 border-cyan-400/60 shadow-[0_0_25px_rgba(6,182,212,0.35)] text-center space-y-3">
+                    <div className="flex items-center justify-between text-cyan-200 text-xs font-black uppercase tracking-wider">
+                      <span className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                        <span className="text-left text-[11px]">{t.pressHandsHolding}</span>
+                      </span>
+                      <span className="font-mono text-base font-black text-white shrink-0 ml-2">
+                        {holdSeconds}s
+                      </span>
+                    </div>
+                    
+                    <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden border border-white/10">
+                      <div 
+                        className="bg-cyan-400 h-full transition-all duration-1000 ease-linear rounded-full"
+                        style={{ width: `${((10 - holdSeconds) / 10) * 100}%` }}
+                      />
+                    </div>
+
+                    <button
+                      onClick={cancelIsometricSession}
+                      className="text-[10px] text-slate-400 hover:text-white uppercase font-bold tracking-wider underline cursor-pointer"
+                    >
+                      {language === 'es' ? 'Detener' : 'Stop'}
+                    </button>
+                  </div>
+                )}
+
+                {isometricState === 'done' && (
+                  <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-center space-y-1">
+                    <p className="text-xs font-black text-emerald-300 uppercase tracking-wider">
+                      {t.pressHandsComplete || (language === 'es' ? '¡Listo! Tensión propioceptiva liberada' : 'Complete! Tension discharged')}
+                    </p>
+                    <p className="text-[10px] text-emerald-200/80 font-medium">
+                      {language === 'es' ? 'Respira despacio y relaja tus manos.' : 'Breathe gently and relax your hands.'}
+                    </p>
                   </div>
                 )}
               </div>

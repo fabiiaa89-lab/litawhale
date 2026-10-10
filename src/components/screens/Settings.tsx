@@ -89,8 +89,8 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
           
           <div className="space-y-4">
             {/* Visual Theme Mode (Claro / Oscuro) */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5">
-              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 block">
+            <div className="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-50 border border-white/10 dark:border-white/10 light:border-slate-200 space-y-2.5">
+              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-400 light:text-slate-500 block">
                 {isSpanish ? "MODO VISUAL / TEMA" : "VISUAL THEME"}
               </span>
               <div className="grid grid-cols-2 gap-2">
@@ -103,10 +103,10 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
                   className={`py-3 px-3 rounded-xl flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                     theme === 'dark'
                       ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-md font-bold'
-                      : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                      : 'bg-white/5 dark:bg-white/5 light:bg-white border-white/10 dark:border-white/10 light:border-slate-200 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:bg-white/10'
                   }`}
                 >
-                  <Moon size={16} className={theme === 'dark' ? 'text-cyan-400' : 'text-slate-400'} />
+                  <Moon size={16} className={theme === 'dark' ? 'text-cyan-400' : 'text-slate-400 dark:text-slate-400 light:text-slate-500'} />
                   <span className="text-xs font-bold">{isSpanish ? "Modo Oscuro" : "Dark Mode"}</span>
                 </button>
 
@@ -118,11 +118,11 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
                   }}
                   className={`py-3 px-3 rounded-xl flex items-center justify-center gap-2 border transition-all cursor-pointer ${
                     theme === 'light'
-                      ? 'bg-amber-500/20 border-amber-400 text-slate-900 shadow-md font-bold'
-                      : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                      ? 'bg-amber-500/25 border-amber-500 text-slate-900 dark:text-white light:text-amber-950 shadow-md font-black'
+                      : 'bg-white/5 dark:bg-white/5 light:bg-white border-white/10 dark:border-white/10 light:border-slate-200 text-slate-400 dark:text-slate-400 light:text-slate-600 hover:bg-white/10'
                   }`}
                 >
-                  <Sun size={16} className={theme === 'light' ? 'text-amber-500' : 'text-slate-400'} />
+                  <Sun size={16} className={theme === 'light' ? 'text-amber-600 dark:text-amber-400 light:text-amber-600' : 'text-slate-400 dark:text-slate-400 light:text-slate-500'} />
                   <span className="text-xs font-bold">{isSpanish ? "Modo Claro" : "Light Mode"}</span>
                 </button>
               </div>
@@ -130,18 +130,18 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
 
             <button 
               onClick={toggleLanguage}
-              className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all border border-white/10 text-white font-black flex justify-between px-6 items-center shadow-lg cursor-pointer"
+              className="w-full py-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-50 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-100 active:scale-95 transition-all border border-white/10 dark:border-white/10 light:border-slate-200 text-white dark:text-white light:text-slate-900 font-black flex justify-between px-6 items-center shadow-sm cursor-pointer"
             >
-              <span className="text-[10px] uppercase tracking-widest text-slate-400">{t.lang}</span>
-              <span className="text-cyan-400 text-sm uppercase">{profile.language}</span>
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-400 light:text-slate-500">{t.lang}</span>
+              <span className="text-cyan-400 dark:text-cyan-400 light:text-cyan-700 text-sm uppercase">{profile.language}</span>
             </button>
 
             {/* Perfil de Sensibilidad Sensorial Clarificado */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5">
-              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 block">
+            <div className="p-4 rounded-2xl bg-white/5 dark:bg-white/5 light:bg-slate-50 border border-white/10 dark:border-white/10 light:border-slate-200 space-y-2.5">
+              <span className="text-[10px] uppercase font-black tracking-widest text-slate-400 dark:text-slate-400 light:text-slate-500 block">
                 {t.sensoryMode}
               </span>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {[
                   { id: 'HIPER', label: isSpanish ? 'Hipersensible' : 'Hypersensitive', sub: isSpanish ? 'Alta sensibilidad' : 'High sensitivity' },
                   { id: 'MED', label: isSpanish ? 'Media' : 'Medium', sub: isSpanish ? 'Equilibrada' : 'Balanced' },
@@ -151,18 +151,18 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
                     key={mode.id}
                     type="button"
                     onClick={() => onUpdate({ sensitivity: mode.id as SensitivityProfile })}
-                    className={`py-3 px-2 rounded-xl text-center border transition-all cursor-pointer ${
+                    className={`py-2.5 px-2.5 rounded-xl text-center border transition-all cursor-pointer min-w-0 flex flex-col justify-center items-center ${
                       profile.sensitivity === mode.id
-                        ? 'bg-cyan-500/25 border-cyan-400 text-white shadow-md font-black'
-                        : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                        ? 'bg-cyan-500/25 border-cyan-500 dark:border-cyan-400 text-white dark:text-white light:text-cyan-950 shadow-md font-black'
+                        : 'bg-white/5 dark:bg-white/5 light:bg-white border-white/10 dark:border-white/10 light:border-slate-200 text-slate-300 dark:text-slate-300 light:text-slate-700 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-slate-100 shadow-sm'
                     }`}
                   >
-                    <span className="text-xs font-black block">{mode.label}</span>
-                    <span className="text-[9px] text-cyan-300/80 block mt-0.5">{mode.sub}</span>
+                    <span className="text-[11px] sm:text-xs font-black block truncate w-full">{mode.label}</span>
+                    <span className="text-[9px] text-cyan-300/80 dark:text-cyan-300/80 light:text-cyan-700 block mt-0.5 truncate w-full">{mode.sub}</span>
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-slate-300/90 leading-relaxed pt-1">
+              <p className="text-xs text-slate-300/90 dark:text-slate-300/90 light:text-slate-600 leading-relaxed pt-1">
                 {profile.sensitivity === 'HIPER' && `🛡️ ${t.hiper}`}
                 {profile.sensitivity === 'MED' && `⚖️ ${t.med}`}
                 {profile.sensitivity === 'HIPO' && `⚡ ${t.hipo}`}
@@ -478,10 +478,10 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => downloadSvgFile('lita-whale-logo-vector.svg')}
-              className="py-3 px-4 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center"
+              className="py-3 px-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center min-w-0"
             >
               <Download size={15} className="shrink-0" />
-              <span>{isSpanish ? "Descargar Vector (SVG)" : "Download Vector (SVG)"}</span>
+              <span className="truncate">{isSpanish ? "Descargar Vector (SVG)" : "Download Vector (SVG)"}</span>
             </motion.button>
 
             {/* Download PNG 2048px with dark background */}
@@ -489,10 +489,10 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
               whileTap={{ scale: 0.95 }}
               onClick={() => handleDownloadPng(true, 'avatar')}
               disabled={exportingType === 'avatar'}
-              className="py-3 px-4 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 active:scale-95 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center"
+              className="py-3 px-3 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 active:scale-95 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center min-w-0"
             >
               <Download size={15} className="shrink-0" />
-              <span>{exportingType === 'avatar' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "Descargar Avatar HD (PNG)" : "Download HD Avatar (PNG)")}</span>
+              <span className="truncate">{exportingType === 'avatar' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "Avatar HD (PNG)" : "HD Avatar (PNG)")}</span>
             </motion.button>
 
             {/* Download PNG transparent */}
@@ -500,20 +500,20 @@ export default function Settings({ profile, theme = 'dark', onUpdate, onToggleSe
               whileTap={{ scale: 0.95 }}
               onClick={() => handleDownloadPng(false, 'transparent')}
               disabled={exportingType === 'transparent'}
-              className="py-3 px-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center"
+              className="py-3 px-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 border border-purple-500/30 text-purple-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md disabled:opacity-50 cursor-pointer text-center min-w-0"
             >
               <Download size={15} className="shrink-0" />
-              <span>{exportingType === 'transparent' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "PNG Fondo Transparente" : "Transparent PNG")}</span>
+              <span className="truncate">{exportingType === 'transparent' ? (isSpanish ? "Generando..." : "Generating...") : (isSpanish ? "PNG Transparente" : "Transparent PNG")}</span>
             </motion.button>
 
             {/* Copy SVG code */}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={handleCopySvg}
-              className="py-3 px-4 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center"
+              className="py-3 px-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer text-center min-w-0"
             >
               {isCopied ? <Check size={15} className="text-emerald-400 shrink-0" /> : <Copy size={15} className="shrink-0" />}
-              <span>{isCopied ? (isSpanish ? "¡Código Copiado!" : "Code Copied!") : (isSpanish ? "Copiar Código SVG (Figma)" : "Copy SVG Code")}</span>
+              <span className="truncate">{isCopied ? (isSpanish ? "¡Copiado!" : "Copied!") : (isSpanish ? "Copiar SVG (Figma)" : "Copy SVG Code")}</span>
             </motion.button>
           </div>
         </div>
@@ -554,7 +554,7 @@ function InputField({ label, value, onChange, placeholder = "", type = "text", i
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold text-sm focus:border-cyan-500/50 outline-none transition-all placeholder:text-slate-500"
+          className="w-full bg-white/5 dark:bg-white/5 light:bg-slate-50 border border-white/10 dark:border-white/10 light:border-slate-300 rounded-2xl p-4 text-white dark:text-white light:text-slate-900 font-bold text-sm focus:border-cyan-500/50 outline-none transition-all placeholder:text-slate-500 dark:placeholder:text-slate-500 light:placeholder:text-slate-400"
         />
         {icon && (
           <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">

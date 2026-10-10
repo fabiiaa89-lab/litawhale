@@ -28,6 +28,7 @@ import HamburgerMenu from './components/HamburgerMenu';
 import PWAInstallModal from './components/PWAInstallModal';
 import SpoonWidget from './components/SpoonWidget';
 import SensoryLog from './components/screens/SensoryLog';
+import Arcade from './components/screens/Arcade';
 import { SHOW_CORTEX } from './constants';
 
 const NeuralCortex = lazy(() => import('./components/screens/NeuralCortex'));
@@ -412,6 +413,8 @@ export default function App() {
         return <SensoryLog language={profile.language} onBack={() => setScreen('home')} />;
       case 'premium':
         return <Premium language={profile.language} onBack={() => setScreen('home')} />;
+      case 'arcade':
+        return <Arcade language={profile.language} onBack={() => setScreen('home')} onNavigate={setScreen} />;
       case 'settings':
         return (
           <Settings 

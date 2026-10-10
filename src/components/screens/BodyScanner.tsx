@@ -18,6 +18,7 @@ import {
   Waves,
   Check
 } from 'lucide-react';
+import { hapticEngine } from '../../utils/hapticEngine';
 
 interface BodyScannerProps {
   profile: Profile;
@@ -57,6 +58,9 @@ export default function BodyScanner({ profile, language, onBack }: BodyScannerPr
         if (curr.seconds <= 1) {
           const nextPhase = curr.phase === 'inhale' ? 'exhale' : 'inhale';
           const nextSeconds = nextPhase === 'inhale' ? 4 : 8;
+          
+          // Cross-platform iOS tactile acoustic pulse + Android physical vibration
+          hapticEngine.playTactilePulse(nextPhase === 'inhale' ? 70 : 120);
           if (typeof navigator !== 'undefined' && navigator.vibrate) {
             try {
               navigator.vibrate(nextPhase === 'inhale' ? [50] : [35, 50, 35]);
@@ -366,17 +370,19 @@ export default function BodyScanner({ profile, language, onBack }: BodyScannerPr
                   {/* Pulsing Core */}
                   <motion.div
                     animate={{
-                      scale: breathPhase === 'inhale' ? 1.08 : 0.88,
+                      scale: breathPhase === 'inhale' 
+                        ? 0.88 + (0.24 * (4 - secondsRemaining)) / 4 
+                        : 1.12 - (0.24 * (8 - secondsRemaining)) / 8,
                       boxShadow: breathPhase === 'inhale' 
-                        ? '0 0 35px rgba(6, 182, 212, 0.35)' 
-                        : '0 0 25px rgba(16, 185, 129, 0.3)',
+                        ? '0 0 35px rgba(6, 182, 212, 0.45)' 
+                        : '0 0 25px rgba(16, 185, 129, 0.35)',
                       backgroundColor: breathPhase === 'inhale' 
-                        ? 'rgba(6, 182, 212, 0.2)' 
-                        : 'rgba(16, 185, 129, 0.2)'
+                        ? 'rgba(6, 182, 212, 0.22)' 
+                        : 'rgba(16, 185, 129, 0.18)'
                     }}
                     transition={{ 
-                      duration: breathPhase === 'inhale' ? 4 : 8, 
-                      ease: "easeInOut" 
+                      duration: 0.9, 
+                      ease: "linear" 
                     }}
                     className="absolute w-32 h-32 rounded-full border-2 border-cyan-400/50 flex flex-col items-center justify-center pointer-events-none"
                   >

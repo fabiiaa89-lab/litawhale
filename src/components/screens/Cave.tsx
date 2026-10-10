@@ -22,10 +22,10 @@ export default function Cave({ language, onExit }: CaveProps) {
         navigator.vibrate([40, 60, 80]);
       } catch (e) {}
     }
-    // Smooth transition into surface world
+    // Smooth transition into surface world with ample time to absorb the peaceful message
     setTimeout(() => {
       onExit();
-    }, 2400);
+    }, 6000);
   };
 
   return (
@@ -225,6 +225,15 @@ export default function Cave({ language, onExit }: CaveProps) {
                     ? 'Has descansado en las profundidades. Ahora emerges lista para navegar tu día a tu propio ritmo.'
                     : 'You rested in the peaceful depths. You now surface ready to navigate life at your own true rhythm.'}
                 </p>
+
+                <div className="pt-4">
+                  <button
+                    onClick={onExit}
+                    className="px-6 py-2.5 rounded-full bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 text-xs font-black uppercase tracking-widest transition-all cursor-pointer shadow-lg active:scale-95"
+                  >
+                    {isEs ? 'Toca para continuar' : 'Tap to continue'}
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>
