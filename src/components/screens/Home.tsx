@@ -14,7 +14,9 @@ import {
   ShieldCheck, 
   Bot,
   Gamepad2,
-  ArrowRight
+  ArrowRight,
+  ShoppingBag,
+  BookOpen
 } from 'lucide-react';
 import WhaleLogo from '../WhaleLogo';
 import { i18n } from '../../i18n';
@@ -353,6 +355,49 @@ export default function Home({
             </span>
           </div>
           <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-400/25 flex items-center justify-center text-teal-300 dark:text-teal-300 light:text-teal-700 shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <ArrowRight size={15} />
+          </div>
+        </motion.button>
+        {/* Kit Sensorial (Afiliados: Loops, Fidgets, Lentes) */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate('kit')}
+          className="w-full bg-pink-500/10 dark:bg-pink-500/10 light:bg-pink-50/70 border border-pink-400/25 dark:border-pink-400/25 light:border-pink-300 rounded-2xl sm:rounded-3xl p-4 sm:p-4.5 flex items-center gap-3.5 cursor-pointer shadow-lg hover:bg-pink-500/20 transition-all text-left shrink-0 group relative overflow-hidden"
+        >
+          <div className="w-11 h-11 rounded-2xl bg-pink-500/20 dark:bg-pink-500/20 light:bg-pink-100 border border-pink-400/35 dark:border-pink-400/35 light:border-pink-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <ShoppingBag size={22} className="text-pink-400 dark:text-pink-400 light:text-pink-700 shrink-0" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-sm sm:text-base font-bold text-white dark:text-white light:text-slate-900 block tracking-tight leading-snug">
+              {isEs ? 'Kit Sensorial' : 'Sensory Kit'}
+            </span>
+            <span className="text-[11px] text-pink-300/80 dark:text-pink-300/80 light:text-pink-800 font-medium block mt-0.5 leading-snug">
+              {isEs ? 'Herramientas recomendadas, Loops y Fidgets' : 'Recommended physical tools & Fidgets'}
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-pink-500/15 border border-pink-400/25 flex items-center justify-center text-pink-300 dark:text-pink-300 light:text-pink-700 shrink-0 group-hover:translate-x-0.5 transition-transform">
+            <ArrowRight size={15} />
+          </div>
+        </motion.button>
+
+        {/* Biblioteca Digital (Infoproductos propios y Hotmart) */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={() => onNavigate('books')}
+          className="w-full bg-sky-500/10 dark:bg-sky-500/10 light:bg-sky-50/70 border border-sky-400/25 dark:border-sky-400/25 light:border-sky-300 rounded-2xl sm:rounded-3xl p-4 sm:p-4.5 flex items-center gap-3.5 cursor-pointer shadow-lg hover:bg-sky-500/20 transition-all text-left shrink-0 group relative overflow-hidden"
+        >
+          <div className="w-11 h-11 rounded-2xl bg-sky-500/20 dark:bg-sky-500/20 light:bg-sky-100 border border-sky-400/35 dark:border-sky-400/35 light:border-sky-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <BookOpen size={22} className="text-sky-400 dark:text-sky-400 light:text-sky-700 shrink-0" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-sm sm:text-base font-bold text-white dark:text-white light:text-slate-900 block tracking-tight leading-snug">
+              {isEs ? 'Biblioteca Digital' : 'Digital Library'}
+            </span>
+            <span className="text-[11px] text-sky-300/80 dark:text-sky-300/80 light:text-sky-800 font-medium block mt-0.5 leading-snug">
+              {isEs ? 'E-books, guías de regulación y recursos' : 'E-books, regulation guides & resources'}
+            </span>
+          </div>
+          <div className="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/25 flex items-center justify-center text-sky-300 dark:text-sky-300 light:text-sky-700 shrink-0 group-hover:translate-x-0.5 transition-transform">
             <ArrowRight size={15} />
           </div>
         </motion.button>

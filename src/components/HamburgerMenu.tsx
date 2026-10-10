@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { Screen, Profile, EnergyLevel, AppTheme } from '../types';
 import { i18n } from '../i18n';
-import { X, User, Building2, Globe, ChevronRight, Waves, Coins, Sun, Moon, Gamepad2 } from 'lucide-react';
+import { X, User, Building2, Globe, ChevronRight, Waves, Coins, Sun, Moon, Gamepad2, ShoppingBag, BookOpen } from 'lucide-react';
 import WhaleLogo from './WhaleLogo';
 import { getEnergyVisual } from '../utils/energyVisual';
 
@@ -152,6 +152,22 @@ export default function HamburgerMenu({
             title={profile.language === 'es' ? 'Entretenimiento Calmante' : 'Calming Entertainment'}
             subtitle={profile.language === 'es' ? 'Fidget Spinner, Sudoku Zen & Palabras' : 'Fidget Spinner, Zen Sudoku & Words'}
             onClick={() => handleSelectScreen('arcade')}
+          />
+
+          {/* Kit Sensorial (Afiliados) */}
+          <MenuItem
+            icon={<ShoppingBag size={18} className="text-pink-400" />}
+            title={profile.language === 'es' ? 'Kit Sensorial' : 'Sensory Kit'}
+            subtitle={profile.language === 'es' ? 'Fidgets y herramientas físicas' : 'Fidgets & physical tools'}
+            onClick={() => handleSelectScreen('kit')}
+          />
+
+          {/* Biblioteca Digital (Hotmart/KDP) */}
+          <MenuItem
+            icon={<BookOpen size={18} className="text-sky-400" />}
+            title={profile.language === 'es' ? 'Biblioteca Digital' : 'Digital Library'}
+            subtitle={profile.language === 'es' ? 'E-books y guías de regulación' : 'E-books & regulation guides'}
+            onClick={() => handleSelectScreen('books')}
           />
 
           {/* Carga Cognitiva con Icono Dinámico */}
