@@ -89,3 +89,8 @@ export const AAC_CARDS: AACCard[] = [
 // Afiliados (M8): pon aquí tus etiquetas. Si están vacías, los enlaces salen sin comisión.
 export const AMAZON_TAG = ''; // ejemplo: 'tu-etiqueta-20'
 export const HOTMART_REF = ''; // tu código de afiliado de Hotmart, si lo usas
+
+// Variable booleana para activar o desactivar la sección y botones del Córtex Neural
+// false = apagado (oculto) | true = encendido (visible)
+export const SHOW_CORTEX = false;
+export const ENABLE_CORTEX = SHOW_CORTEX;

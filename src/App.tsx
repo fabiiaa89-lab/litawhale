@@ -28,6 +28,7 @@ import HamburgerMenu from './components/HamburgerMenu';
 import PWAInstallModal from './components/PWAInstallModal';
 import SpoonWidget from './components/SpoonWidget';
 import SensoryLog from './components/screens/SensoryLog';
+import { SHOW_CORTEX } from './constants';
 
 const NeuralCortex = lazy(() => import('./components/screens/NeuralCortex'));
 const Companion = lazy(() => import('./components/screens/Companion'));
@@ -192,10 +193,12 @@ export default function App() {
 
   // Escuchador del evento del Córtex Externo (Activado desde el Header)
   useEffect(() => {
-    const handleOpenCortex = () => setScreen('ai');
-    window.addEventListener('open_cortex', handleOpenCortex);
-    return () => window.removeEventListener('open_cortex', handleOpenCortex);
-  }, []);
+  const handleOpenCortex = () => {
+    if (SHOW_CORTEX) setScreen('ai');
+  };
+  window.addEventListener('open_cortex', handleOpenCortex);
+  return () => window.removeEventListener('open_cortex', handleOpenCortex);
+}, []);
 
   useEffect(() => {
     try {
@@ -381,17 +384,20 @@ export default function App() {
       case 'sos':
         return <SOSData language={profile.language} profile={profile} onBack={() => setScreen('home')} onCall={callEmergency} />;
       case 'ai':
-        return <NeuralCortex language={profile.language} profile={profile} onBack={() => setScreen('home')} onNavigate={setScreen} />;
-      case 'debts':
-        return (
-          <Debts 
-            language={profile.language} 
-            profile={profile} 
-            debts={debts} 
-            onUpdate={setDebts} 
-            onBack={() => setScreen('home')} 
-          />
-        );
+  return SHOW_CORTEX ? (
+    <NeuralCortex language={profile.language} profile={profile} onBack={() => setScreen('home')} onNavigate={setScreen} />
+  ) : (
+    <Home 
+      energy={energy} 
+      language={profile.language} 
+      theme={theme}
+      onNavigate={setScreen} 
+      onOpenEnergy={() => setIsEnergyModalOpen(true)} 
+      onOpenMenu={() => setIsMenuOpen(true)}
+      onToggleTheme={handleToggleTheme}
+      onOpenInstallModal={() => setIsInstallModalOpen(true)}
+    />
+  );
       case 'stealth':
         return <StealthMode language={profile.language} onBack={() => setScreen('home')} onNavigate={setScreen} />;
       case 'companion':

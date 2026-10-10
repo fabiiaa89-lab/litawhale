@@ -18,6 +18,7 @@ import {
 import WhaleLogo from '../WhaleLogo';
 import { i18n } from '../../i18n';
 import PWAInstallBanner from '../PWAInstallBanner';
+import { SHOW_CORTEX } from '../../constants';
 
 interface HomeProps {
   language: Language;
@@ -79,15 +80,17 @@ export default function Home({
         <div className="flex gap-2 shrink-0 items-center">
           
           {/* Botón del Córtex Externo */}
-          <motion.button
-            whileTap={{ scale: 0.94 }}
-            onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
-            className="h-9 sm:h-10 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-md cursor-pointer"
-            aria-label="Abrir Córtex Externo"
-          >
-            <Bot size={16} className="text-indigo-400" />
-            <span className="hidden sm:inline">Córtex</span>
-          </motion.button>
+          {SHOW_CORTEX && (
+  <motion.button
+    whileTap={{ scale: 0.94 }}
+    onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
+    className="h-9 sm:h-10 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-md cursor-pointer"
+    aria-label="Abrir Córtex Externo"
+  >
+    <Bot size={16} className="text-indigo-400" />
+    <span className="hidden sm:inline">Córtex</span>
+  </motion.button>
+)}
 
           {/* Elemental Vitality Pill: Spoons Balance */}
           <motion.button 

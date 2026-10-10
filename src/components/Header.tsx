@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import WhaleLogo from './WhaleLogo';
 import { EnergyLevel, AppTheme } from '../types';
 import { spoonsToEnergyLevel } from '../utils/energyVisual';
+import { SHOW_CORTEX } from '../constants';
 
 interface HeaderProps {
   title: string;
@@ -110,15 +111,17 @@ export default function Header({
    <div className="flex items-center gap-2 shrink-0">
 
      {/* Botón del Córtex Externo */}
-     <motion.button
-       whileTap={{ scale: 0.94 }}
-       onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
-       className="h-9 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-sm cursor-pointer"
-       aria-label="Abrir Córtex Externo"
-     >
-       <Brain size={14} />
-       <span className="hidden sm:inline">Córtex</span>
-     </motion.button>
+     {SHOW_CORTEX && (
+  <motion.button
+    whileTap={{ scale: 0.94 }}
+    onClick={() => window.dispatchEvent(new CustomEvent('open_cortex'))}
+    className="h-9 px-3 rounded-xl bg-[#1E1B4B]/80 hover:bg-[#312E81] border border-indigo-500/30 flex items-center gap-1.5 text-xs font-bold text-indigo-300 transition-all shadow-sm cursor-pointer"
+    aria-label="Abrir Córtex Externo"
+  >
+    <Brain size={14} />
+    <span className="hidden sm:inline">Córtex</span>
+  </motion.button>
+)}
 
      {/* Medidor de Cucharas (Tu código original) */}
      <motion.button
