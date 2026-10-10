@@ -333,11 +333,6 @@ export default function Home({
             <ArrowRight size={15} />
           </div>
         </motion.button>
-
-        <div className="mt-4 mb-6 text-center opacity-60">
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Developed by</p>
-          <p className="text-xs text-slate-400 dark:text-slate-400 light:text-slate-600 font-bold tracking-tight mt-0.5">Fabiola Aponte</p>
-        </div>
       </div>
     </div>
   );
